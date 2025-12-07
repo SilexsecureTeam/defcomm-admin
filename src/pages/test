@@ -1,0 +1,16 @@
+src/
+├── components/
+│   └── dashboard/
+│       ├── Sidebar.jsx
+│       ├── Header.jsx
+│       └── MainContent.jsx
+│       ├── Overview.jsx                   ← Shows in MainContent when /dashboard
+│       ├── Customers.jsx
+│       ├── Orders.jsx
+│       └── Analytics.jsx
+├── pages/
+│   └── dashboard/
+│       ├── DashboardLayout.jsx     ← Main layout (Sidebar + Header + Outlet)
+
+├── App.jsx
+└── main.jsx
