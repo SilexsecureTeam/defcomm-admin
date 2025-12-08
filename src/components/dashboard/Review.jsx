@@ -254,7 +254,7 @@ const Review = () => {
 
         {/* Table Container */}
         <div className="bg-[#8BAF2B]/20 text-[#E5E5E5] backdrop-blur-sm rounded-lg border border-[#2a3e2a]/50 overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto k">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#2a3e2a] bg-[#8BAF2B]/40 text-[#E5E5E5]">
