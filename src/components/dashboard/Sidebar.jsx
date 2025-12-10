@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/logo.png";
+import { LogOut } from "lucide-react";
 
 const menuItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Overview", end: true },
@@ -23,6 +24,7 @@ const menuItems = [
   { to: "/dashboard/programs", icon: BookOpen, label: "Programs" },
   { to: "/dashboard/setting", icon: Settings, label: "Settings" },
   { to: "/dashboard/analysis", icon: ChartColumn, label: "Analysis" },
+  { to: "/signin", icon: LogOut, label: "Signout" },
 ];
 
 export default function Sidebar({
@@ -32,7 +34,7 @@ export default function Sidebar({
   onToggleCollapse,
 }) {
   return (
-    <div className="bg-[#000000]">
+    <div className="bg-[#000000] ">
       {/* Mobile Backdrop */}
       {isMobileOpen && (
         <div
@@ -46,7 +48,7 @@ export default function Sidebar({
         className={`
     fixed inset-y-0 left-0 z-50 text-white flex flex-col
     transition-all duration-300 ease-in-out
-    bg-[#8BAF2B]/20 h-full  
+    bg-[#8BAF2B]/20 h-full overflow-x-auto"  
     
     lg:relative lg:z-auto
     ${isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
@@ -87,7 +89,7 @@ export default function Sidebar({
         </div>
 
         {/* Navigation */}
-        <nav className="mt-8 flex-1">
+        <nav className="mt-8 flex-1 overflow-x-auto">
           {menuItems.map((item) => (
             <NavLink
               key={item.to}

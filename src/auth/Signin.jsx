@@ -1,146 +1,129 @@
-// SignIn.jsx
-import React, { useState } from "react";
-import { Mail, Lock, LogIn } from "lucide-react";
+// import { Shield, ChevronDown } from "lucide-react";
 import defsignin from "../assets/defsignin.jpg";
-import { Link, useNavigate } from "react-router-dom";
+import logo from "../assets/defdashboard.svg";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function SignIn() {
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    rememberMe: false,
-  });
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Simple required check
+    if (!username.trim() || !password.trim()) return;
+
+    // Replace with real auth later — for now just go to OTP
     navigate("/otp");
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center overflow-hidden">
-      <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 h-screen">
-        {/* Left Side - Image */}
-        <div className="relative overflow-hidden hidden md:block">
-          <img
-            src={defsignin}
-            alt="Security & Hacking"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/40 md:hidden" />
-        </div>
+    <>
+      <div className="min-h-screen bg-black text-white ">
+        {/* Header Navigation */}
+        <header className="px-4 md:px-10 py-6 flex justify-between border-b border-b-gray-800 items-center">
+          <div className="flex items-center space-x-2">
+            <img src={logo} alt="logo" className="h-12" />
+          </div>
+        </header>
+        <div className="flex px-4 md:px-10 py-6">
+          {/* Left Side - Hero Image */}
+          <div className="hidden lg:flex lg:w-1/2 relative">
+            <img
+              src={defsignin}
+              alt="Security researcher working"
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{
+                backgroundImage: `url(${defsignin})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-transparent" />
+          </div>
 
-        {/* Right Side - Form */}
-        <div className="flex items-center justify-center px-5 py-6 sm:px-8 md:px-12">
-          <div className="w-full max-w-md mx-auto p-8 sm:p-10 bg-slate-900/95 backdrop-blur-sm border border-gray-800 rounded-2xl shadow-2xl">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
-                Welcome Back
-              </h2>
-              <p className="mt-2 text-gray-400 text-sm sm:text-base">
-                Sign in to your account
-              </p>
+          {/* Right Side - Login Form */}
+          <div className="w-full lg:w-1/2 flex flex-col">
+            {/* Main Login Card */}
+            <div className="flex-1 flex items-center justify-center px-2">
+              <div className="w-full max-w-xl bg-[#0C1017]/95 px-8 py-12 rounded-md">
+                <h1 className="text-4xl font-semibold mb-8 ">SIGN IN</h1>
+
+                {/* Registration Tabs */}
+                <div className="flex justify-center mb-10">
+                  <div className="inline-flex  space-x-2  p-1 rounded-xl">
+                    <button className="rounded-2xl border px-3 py-3 text-center font-semibold transition-all duration-150 border-[#A0B84B] bg-[#161C12] text-white shadow-[0_20px_40px_rgba(35,44,18,0.55)]">
+                      Create a User Account
+                    </button>
+                    <button className="rounded-2xl border px-3 py-3 text-center font-semibold transition-all duration-150 border-white/10 bg-[#0F141D] text-[#A7ADBB] hover:border-[#394050] hover:text-white">
+                      Register a New Group
+                    </button>
+                    <button className="rounded-2xl border px-3 py-3 text-center font-semibold transition-all duration-150 border-white/10 bg-[#0F141D] text-[#A7ADBB] hover:border-[#394050] hover:text-white">
+                      Register a New Company
+                    </button>
+                  </div>
+                </div>
+
+                {/* Welcome Text */}
+
+                <p className="flex items-start gap-4 rounded-3xl border border-white/12 bg-[#11151E] p-6 text-base mb-3 text-[#D6D9E6]">
+                  Bug hunters and security teams, welcome! Join the Defcomm
+                  community of cybersecurity enthusiasts and help us build a
+                  safer digital world.
+                </p>
+
+                {/* Login Form */}
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-300">
+                      USERNAME OR EMAIL <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="Enter username or email"
+                      className="w-full rounded-xl border border-white/12 bg-[#0A0D13] px-4 py-3.5 text-sm text-[#E8EAF2] placeholder:text-[#6A7283] focus:border-[#A1B84D] focus:outline-none focus:ring-0"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-300">
+                      PASSWORD <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full rounded-xl border border-white/12 bg-[#0A0D13] px-4 py-3.5 text-sm text-[#E8EAF2] placeholder:text-[#6A7283] focus:border-[#A1B84D] focus:outline-none focus:ring-0"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full rounded-full bg-gradient-to-r from-[#3F4E17] to-[#9DB347] px-6 py-4 text-sm font-semibold uppercase tracking-[0.3em] text-white shadow-[0_25px_55px_rgba(67,104,18,0.45)] transition-transform duration-150 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    SIGN IN
+                  </button>
+                </form>
+
+                {/* Footer CTA */}
+                <div className="rounded-3xl border border-white/12 bg-[#11151C] p-6 m-6 text-sm text-[#C7CBD7]">
+                  <p className="text-[13px]">Don't have an account.</p>
+                  <button className="mt-4 inline-flex w-full items-center justify-center rounded-full border border-[#3D4330] px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-[#B4BC92] transition-colors duration-150 hover:border-[#607046] hover:text-white">
+                    JOIN THE HUNT
+                  </button>
+                </div>
+              </div>
             </div>
-
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              {/* Email */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                >
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="you@example.com"
-                    className="w-full pl-12 pr-4 py-4 text-base bg-gray-900/80 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#8BAF2B]/20 focus:ring-2 focus:ring-[#8BAF2B]/30 transition-all duration-200"
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                >
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                    className="w-full pl-12 pr-4 py-4 text-base bg-gray-900/80 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#8BAF2B]/20 focus:ring-2 focus:ring-[#8BAF2B]/30 transition-all duration-200"
-                  />
-                </div>
-              </div>
-
-              {/* Remember + Forgot */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
-                <label className="flex items-center gap-3 text-gray-300 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="rememberMe"
-                    checked={formData.rememberMe}
-                    onChange={handleChange}
-                    className="w-5 h-5 rounded border-gray-600 bg-gray-800 text-[#8BAF2B] focus:ring-[#8BAF2B] focus:ring-offset-gray-900"
-                  />
-                  <span>Remember me</span>
-                </label>
-                <a
-                  href="#"
-                  className="text-[#8BAF2B] hover:text-[#9ACD32] transition whitespace-nowrap"
-                >
-                  Forgot password?
-                </a>
-              </div>
-
-              {/* Sign In Button */}
-              <button
-                type="submit"
-                className="w-full py-3 mt-4 bg-[#8BAF2B] hover:bg-[#9ACD32] active:bg-[#7A9E26] text-black font-bold text-base rounded-xl transition-all duration-200 flex items-center justify-center gap-3 group shadow-lg"
-              >
-                <LogIn className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                Sign In
-              </button>
-
-              <p className="text-center text-sm sm:text-base text-gray-400 mt-8">
-                Don't have an account?{" "}
-                <Link
-                  to="/signup"
-                  className="font-semibold text-[#8BAF2B] hover:text-[#9ACD32] transition underline underline-offset-4"
-                >
-                  Sign up now
-                </Link>
-              </p>
-            </form>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

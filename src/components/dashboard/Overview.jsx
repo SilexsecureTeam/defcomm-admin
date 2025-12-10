@@ -525,7 +525,7 @@ export default function Overview() {
               title: "Report #1234 Approved",
               subtitle: "100 points • $500 • Approved",
               time: "2h ago",
-              titleClass: "",
+              titleclassName: "",
             },
             {
               icon: <DollarSign className="w-5 h-5 text-green-400" />,
@@ -533,7 +533,7 @@ export default function Overview() {
               title: "Payout for Report #1234",
               subtitle: "Payout issued",
               time: "3h ago",
-              titleClass: "",
+              titleclassName: "",
             },
             {
               icon: <AlertTriangle className="w-5 h-5 text-red-400" />,
@@ -541,7 +541,7 @@ export default function Overview() {
               title: "Report #5678 SLA Warning",
               subtitle: "SLA warning",
               time: "4h ago",
-              titleClass: "text-red-400",
+              titleclassName: "text-red-400",
             },
             {
               icon: <Activity className="w-5 h-5 text-blue-400" />,
@@ -549,7 +549,7 @@ export default function Overview() {
               title: "Report #9012 Status Changed",
               subtitle: "Status changed",
               time: "5h ago",
-              titleClass: "",
+              titleclassName: "",
             },
           ].map((item, i) => (
             <div
@@ -563,7 +563,7 @@ export default function Overview() {
                   {item.icon}
                 </div>
                 <div className="flex-1">
-                  <div className={`font-medium ${item.titleClass}`}>
+                  <div className={`font-medium ${item.titleclassName}`}>
                     {item.title}
                   </div>
                   <div className="text-sm ">{item.subtitle}</div>
