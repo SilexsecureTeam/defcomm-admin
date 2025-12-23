@@ -34,7 +34,7 @@ const Attendance = () => {
   const absentPercentage = (absentCount / total) * 100;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-[#F8F9FB] p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -63,7 +63,7 @@ const Attendance = () => {
               <h3 className="text-base text-center font-semibold text-[#000000] mb-1">
                 Mark Attendance
               </h3>
-              <p className="text-sm text-center text-gray-500 mb-3">
+              <p className="text-sm text-center text-[#8A8A8A] mb-3">
                 by office time
               </p>
               <p className="text-2xl text-center font-bold text-gray-900 mb-4">
@@ -79,7 +79,7 @@ const Attendance = () => {
               <h3 className="text-base text-center font-semibold text-[#000000] mb-1">
                 Mark Attendance
               </h3>
-              <p className="text-sm text-center text-gray-500 mb-3">
+              <p className="text-sm text-center text-[#8A8A8A] mb-3">
                 by office time
               </p>
               <p className="text-2xl font-bold text-center text-gray-900 mb-4">
@@ -120,7 +120,7 @@ const Attendance = () => {
               <div className="flex">
                 {/* Y-axis */}
                 <div
-                  className="flex flex-col justify-between text-xs text-gray-500 pr-4 py-2"
+                  className="flex flex-col justify-between text-xs text-[#8A8A8A] pr-4 py-2"
                   style={{ height: "300px" }}
                 >
                   <span>100%</span>

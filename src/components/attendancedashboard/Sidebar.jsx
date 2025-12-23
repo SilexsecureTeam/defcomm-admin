@@ -32,12 +32,12 @@ const menuItems = [
     label: "Attendance",
   },
   {
-    to: "/attendancedashboard/submissions",
+    to: "/attendancedashboard/certificates",
     icon: Award,
     label: "Certificates",
   },
   {
-    to: "/attendancedashboard/programs",
+    to: "/attendancedashboard/souvenir",
     icon: Gift,
     label: "Souvenir",
   },

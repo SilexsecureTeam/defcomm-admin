@@ -116,7 +116,7 @@ const AttendanceEvent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-[#F8F9FB] p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header with Tabs and Search */}
         <div className=" mb-6">

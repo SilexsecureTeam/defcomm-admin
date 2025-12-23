@@ -147,7 +147,7 @@ const AttendanceOverview = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-[#F8F9FB] p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -258,7 +258,7 @@ const AttendanceOverview = () => {
                         <p className="text-sm font-medium text-gray-900">
                           {cert.id}
                         </p>
-                        <p className="text-xs text-gray-500">{cert.name}</p>
+                        <p className="text-xs text-[#8A8A8A]">{cert.name}</p>
                       </div>
                     </div>
                     <button className="px-4 py-2 text-[#85AB20] text-sm rounded-lg flex items-center gap-2">

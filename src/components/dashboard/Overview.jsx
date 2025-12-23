@@ -104,7 +104,7 @@ export default function Overview() {
           </div>
           <div className="flex items-center gap-4">
             <div className="text-4xl font-semibold">58</div>
-            <div className="text-gray-500 text-sm mt-2">0%</div>
+            <div className="text-[#8A8A8A] text-sm mt-2">0%</div>
           </div>
         </div>
 
@@ -129,7 +129,7 @@ export default function Overview() {
           </div>
           <div className="flex items-center gap-4">
             <div className="text-4xl font-semibold">358</div>
-            <div className="text-gray-500 text-sm mt-2">0%</div>
+            <div className="text-[#8A8A8A] text-sm mt-2">0%</div>
           </div>
         </div>
       </div>

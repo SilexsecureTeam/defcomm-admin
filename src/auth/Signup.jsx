@@ -37,7 +37,7 @@ export default function SignUp() {
                     First Name <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A]" />
                     <input
                       type="text"
                       required
@@ -76,7 +76,7 @@ export default function SignUp() {
                   Email <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A]" />
                   <input
                     type="email"
                     required
@@ -91,7 +91,7 @@ export default function SignUp() {
                   Phone Number <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A]" />
                   <input
                     type="tel"
                     required
@@ -106,7 +106,7 @@ export default function SignUp() {
                   Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A]" />
                   <input
                     type="password"
                     required
@@ -121,7 +121,7 @@ export default function SignUp() {
                   Confirm Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A]" />
                   <input
                     type="password"
                     required
@@ -136,7 +136,7 @@ export default function SignUp() {
                   Country of Residence <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A]" />
                   <select className="w-full pl-12 pr-4 py-4 bg-gray-900/80 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-[#8BAF2B]/20 focus:ring-2 focus:ring-[#8BAF2B]/30 transition-all appearance-none">
                     <option>Select</option>
                     <option>Nigeria</option>
@@ -178,7 +178,7 @@ export default function SignUp() {
                   .
                 </p>
 
-                <p className="text-xs text-gray-500">• Mandatory Fields</p>
+                <p className="text-xs text-[#8A8A8A]">• Mandatory Fields</p>
               </div>
 
               <button

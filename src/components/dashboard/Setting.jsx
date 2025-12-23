@@ -151,7 +151,7 @@ export default function Setting() {
                   <select className="w-full px-4 py-3 bg-[#89868D] border border-gray-800 rounded-lg appearance-none focus:outline-none focus:border-lime-500 transition pr-10">
                     <option>Pacific Standard Time</option>
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A] pointer-events-none" />
                 </div>
               </div>
             </div>

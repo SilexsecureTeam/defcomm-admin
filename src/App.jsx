@@ -15,6 +15,9 @@ import AttendanceDashboardLayout from "./pages/AttendanceDashboardLayout";
 import AttendanceOverview from "./components/attendancedashboard/AttendanceOverview";
 import AttendanceEvent from "./components/attendancedashboard/AttendanceEvent.jsx";
 import Attendance from "./components/attendancedashboard/Attendance.jsx";
+import CertificateAttendance from "./components/attendancedashboard/CertificateAttendance.jsx";
+import SouvenirAttendance from "./components/attendancedashboard/SouvenirAttendance.jsx";
+import SettingAttendance from "./components/attendancedashboard/SettingAttendance.jsx";
 // auth imports
 import SignIn from "./auth/Signin";
 import OTP from "./auth/Otp.jsx";
@@ -44,6 +47,9 @@ function App() {
         <Route index element={<AttendanceOverview />} />
         <Route path="events" element={<AttendanceEvent />} />
         <Route path="attendance" element={<Attendance />} />
+        <Route path="certificates" element={<CertificateAttendance />} />
+        <Route path="souvenir" element={<SouvenirAttendance />} />
+        <Route path="setting" element={<SettingAttendance />} />
       </Route>
 
       {/* Redirect root to dashboard */}
