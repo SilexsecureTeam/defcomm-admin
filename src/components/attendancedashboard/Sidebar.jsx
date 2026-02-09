@@ -26,11 +26,11 @@ const menuItems = [
     icon: CalendarDays,
     label: "Events",
   },
-  {
-    to: "/attendancedashboard/attendance",
-    icon: Users,
-    label: "Attendance",
-  },
+  // {
+  //   to: "/attendancedashboard/attendance",
+  //   icon: Users,
+  //   label: "Attendance",
+  // },
   {
     to: "/attendancedashboard/certificates",
     icon: Award,

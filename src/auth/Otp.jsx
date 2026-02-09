@@ -1,131 +1,224 @@
-// OTP.jsx - Matches the new SignIn design exactly
-import React, { useState } from "react";
-import { ArrowLeft, CheckCircle } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import defsignin from "../assets/defsignin.jpg";
-import logo from "../assets/defdashboard.svg";
+// src/auth/Otp.jsx
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import logo from "../assets/Defcomm-04 2.svg";
+import bgImage from "../assets/defcoobg.jpg";
+import "../index.css"; // your Tailwind base
 
-export default function OTP() {
+const Otp = () => {
+  const [otp, setOtp] = useState(["", "", "", ""]); // 4 digits
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState({
+    type: "success",
+    text: "OTP Sent. Check your mail",
+  });
   const navigate = useNavigate();
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
 
-  const handleChange = (value, index) => {
-    if (!/^\d*$/.test(value)) return;
+  // Refs for each input box
+  const inputRefs = useRef([]);
+
+  // Theme mode setup (same as before)
+  useEffect(() => {
+    let mode = "light";
+    const attr = document.documentElement.getAttribute("data-bs-theme-mode");
+    if (attr) mode = attr;
+    else if (localStorage.getItem("data-bs-theme"))
+      mode = localStorage.getItem("data-bs-theme");
+
+    if (mode === "system") {
+      mode = window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+    }
+
+    document.documentElement.setAttribute("data-bs-theme", mode);
+  }, []);
+
+  // Focus first input on mount
+  useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
+
+  const handleChange = (index, value) => {
+    if (!/^\d?$/.test(value)) return; // only allow digits or empty
+
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    if (value && index < 5) {
-      document.getElementById(`otp-${index + 1}`)?.focus();
+    // Auto-focus next input if value entered
+    if (value && index < 3) {
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handleKeyDown = (e, index) => {
+  const handleKeyDown = (index, e) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      document.getElementById(`otp-${index - 1}`)?.focus();
+      // Move to previous box on backspace when empty
+      inputRefs.current[index - 1]?.focus();
+    } else if (e.key === "ArrowLeft" && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    } else if (e.key === "ArrowRight" && index < 3) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").trim();
+    if (/^\d{4}$/.test(pastedData)) {
+      const digits = pastedData.split("");
+      setOtp(digits);
+      // Focus last box after paste
+      inputRefs.current[3]?.focus();
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // const code = otp.join("");
-    // Add your verification logic here
-    navigate("/");
+    const otpValue = otp.join("").trim();
+    if (otpValue.length !== 4) return;
+
+    setIsSubmitting(true);
+
+    // Simulate OTP verification (replace with real API)
+    setTimeout(() => {
+      setIsSubmitting(false);
+
+      if (otpValue === "1234") {
+        // ← demo success
+        setMessage({
+          type: "success",
+          text: "Login successful! Redirecting...",
+        });
+        setTimeout(() => navigate("/subadmin"), 1000);
+      } else {
+        setMessage({ type: "error", text: "Invalid OTP. Try again." });
+        setOtp(["", "", "", ""]); // clear on error
+        inputRefs.current[0]?.focus();
+      }
+    }, 1500);
   };
 
-  const isComplete = otp.every((digit) => digit !== "");
-
   return (
-    <>
-      <div className="min-h-screen bg-black text-white">
-        {/* Header */}
-        <header className="px-4 md:px-10 py-6 flex justify-between border-b border-b-gray-800 items-center">
-          <div className="flex items-center space-x-2">
-            <img src={logo} alt="logo" className="h-12" />
-          </div>
-        </header>
-
-        <div className="flex px-4 md:px-10 py-6">
-          {/* Left Side - Hero Image */}
-          <div className="hidden lg:flex lg:w-1/2 relative">
-            <img
-              src={defsignin}
-              alt="Security researcher"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-transparent" />
-          </div>
-
-          {/* Right Side - OTP Form */}
-          <div className="w-full lg:w-1/2 flex flex-col">
-            <div className="flex-1 flex items-center justify-center px-2">
-              <div className="w-full max-w-xl bg-[#0C1017]/95 px-8 py-12 rounded-md">
-                {/* Back Button */}
-                <Link
-                  to="/signup"
-                  className="inline-flex items-center gap-2 text-[#A7ADBB] hover:text-white transition-colors mb-8"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                  Back
-                </Link>
-
-                {/* Title + Icon */}
-                <div className="text-center mb-10">
-                  <div className="mx-auto w-20 h-20 bg-[#A0B84B]/10 rounded-full flex items-center justify-center mb-6">
-                    <CheckCircle className="w-12 h-12 text-[#A0B84B]" />
-                  </div>
-                  <h1 className="text-4xl font-semibold mb-3">
-                    Verify Your Phone
-                  </h1>
-                  <p className="text-[#D6D9E6] text-base">
-                    We've sent a 6-digit code to your phone number.
-                  </p>
-                </div>
-
-                {/* OTP Inputs */}
-                <form onSubmit={handleSubmit} className="space-y-10">
-                  <div className="flex justify-center gap-4">
-                    {otp.map((digit, index) => (
-                      <input
-                        key={index}
-                        id={`otp-${index}`}
-                        type="text"
-                        maxLength={1}
-                        value={digit}
-                        onChange={(e) => handleChange(e.target.value, index)}
-                        onKeyDown={(e) => handleKeyDown(e, index)}
-                        className="w-16 h-16 text-3xl font-bold text-center rounded-xl border border-white/12 bg-[#0A0D13] text-[#E8EAF2] focus:border-[#A1B84D] focus:outline-none transition-all duration-200"
-                      />
-                    ))}
-                  </div>
-
-                  {/* Submit Button - Exact same gradient & shadow as SignIn */}
-                  <button
-                    type="submit"
-                    disabled={!isComplete}
-                    className="w-full rounded-full bg-gradient-to-r from-[#3F4E17] to-[#9DB347] px-6 py-4 text-sm font-semibold uppercase tracking-[0.3em] text-white shadow-[0_25px_55px_rgba(67,104,18,0.45)] transition-transform duration-150 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 flex items-center justify-center"
-                  >
-                    Verify & Continue
-                  </button>
-                </form>
-
-                {/* Resend */}
-                <div className="mt-8 text-center">
-                  <p className="text-[#A7ADBB] text-sm">
-                    Didn’t receive the code?{" "}
-                    <button
-                      type="button"
-                      className="text-[#A0B84B] hover:text-[#c0d870] font-medium transition-colors"
-                    >
-                      Resend Code
-                    </button>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div
+      className="min-h-screen flex flex-col lg:flex-row font-sans"
+      style={{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Left side - Logo & slogan (hidden on mobile) */}
+      <div className="hidden lg:flex flex-col justify-center w-1/2 px-10 pt-15">
+        <div className="flex flex-col items-center lg:items-start">
+          <a href="#" className="mb-7">
+            <img src={logo} alt="Logo" className="w-52 h-auto" />
+          </a>
+          <h2 className="text-white text-xl lg:text-2xl font-normal">
+            Redefining Defence, Communication
+          </h2>
         </div>
       </div>
-    </>
+
+      {/* Right side - OTP card */}
+      <div className="flex flex-col justify-center w-full lg:w-1/2 px-12 lg:px-20 py-12">
+        <div className="bg-white rounded-2xl w-full max-w-md p-8 lg:p-10 flex flex-col items-center mx-auto">
+          <h1 className="text-gray-900 text-2xl font-bold mb-3 text-center">
+            Check your mail for Your OTP to Login
+          </h1>
+
+          {/* Message */}
+          {message && (
+            <div
+              className={`mb-6 px-4 py-2 rounded-lg text-center text-sm font-medium w-fit ${
+                message.type === "success"
+                  ? "bg-[#17C653]/20 text-[#17C653] border border-[#17C653]/30"
+                  : "bg-red-100 text-red-800 border border-red-300"
+              }`}
+            >
+              {message.text}
+            </div>
+          )}
+
+          {/* OTP Form */}
+          <form className="w-full" onSubmit={handleSubmit}>
+            <div className="mb-8">
+              <label className="block text-gray-700 text-sm font-medium mb-3 text-center">
+                Enter 4-digit OTP
+              </label>
+
+              <div className="flex justify-center gap-4">
+                {otp.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    type="text"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    onPaste={handlePaste}
+                    className="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:border-[#36460A] focus:outline-none focus:ring-2 focus:ring-[#36460A]/30 bg-white text-gray-900 transition-all"
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Verify Button */}
+            <button
+              type="submit"
+              disabled={isSubmitting || otp.join("").trim().length !== 4}
+              className={`w-full bg-[#36460A] hover:bg-[#36460A]/90 text-white py-3 rounded-lg font-semibold flex justify-center items-center transition-all ${
+                isSubmitting || otp.join("").trim().length !== 4
+                  ? "opacity-70 cursor-not-allowed"
+                  : ""
+              }`}
+            >
+              {isSubmitting ? (
+                <>
+                  Verifying...
+                  <svg
+                    className="animate-spin h-5 w-5 ml-3 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    />
+                  </svg>
+                </>
+              ) : (
+                "Verify OTP"
+              )}
+            </button>
+          </form>
+
+          {/* Back to Sign In */}
+          <p className="mt-6 text-sm text-gray-600 text-center">
+            Back to?{" "}
+            <button
+              onClick={() => navigate("/admin/signin")}
+              className="text-blue-600 hover:underline font-medium"
+            >
+              Sign in
+            </button>
+          </p>
+        </div>
+      </div>
+    </div>
   );
-}
+};
+
+export default Otp;

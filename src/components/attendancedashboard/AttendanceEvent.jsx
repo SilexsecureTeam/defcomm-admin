@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Search, MapPin, Users, ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const AttendanceEvent = () => {
   const [activeTab, setActiveTab] = useState("All");
@@ -10,10 +11,10 @@ const AttendanceEvent = () => {
   const itemsPerPage = 12;
 
   // Mock data - in production this would come from API
-  const allEvents = Array.from({ length: 36 }, (_, i) => ({
+  const allEvents = Array.from({ length: 1 }, (_, i) => ({
     id: i + 1,
-    title: "SecureComm Hack & Build Challenge",
-    date: "January 12, 2025",
+    title: "Africa Defence Tech Conference",
+    date: "March 07, 2026",
     time: "9:00 AM",
     location: "Virtual",
     attendees: 0,
@@ -21,10 +22,10 @@ const AttendanceEvent = () => {
       i % 4 === 0
         ? "Upcoming"
         : i % 4 === 1
-        ? "Ongoing"
-        : i % 4 === 2
-        ? "Past"
-        : "Upcoming",
+          ? "Ongoing"
+          : i % 4 === 2
+            ? "Past"
+            : "Upcoming",
     registrationOpen: i % 3 === 0,
     isCreateCard: i % 8 === 0,
   }));
@@ -67,9 +68,11 @@ const AttendanceEvent = () => {
             <span className="text-[#8A8A8A] ml-2">{event.location}</span>
           </div>
 
-          <button className="w-full mt-2 bg-[#85AB20]/50 hover:bg-[#85AB20]/70 text-[#36460A] font-medium py-2.5 px-4 rounded-md transition-colors">
-            View Details
-          </button>
+          <Link to="/attendancedashboard/attendance">
+            <button className="w-full mt-2 bg-[#85AB20]/50 hover:bg-[#85AB20]/70 text-[#36460A] font-medium py-2.5 px-4 rounded-md transition-colors">
+              View Details
+            </button>
+          </Link>
         </div>
       );
     }

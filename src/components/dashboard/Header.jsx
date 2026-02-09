@@ -12,9 +12,9 @@ export default function Header({ onMenuClick, pageTitle = "Overview" }) {
         >
           <Menu size={28} />
         </button>
-        <h2 className="text-xl font-semibold text-white hidden sm:block">
+        <h3 className="text-xl font-semibold text-white hidden sm:block">
           {pageTitle}
-        </h2>
+        </h3>
       </div>
 
       {/* Center: Search Bar */}

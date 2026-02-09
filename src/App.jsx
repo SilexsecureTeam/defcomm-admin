@@ -21,6 +21,11 @@ import SettingAttendance from "./components/attendancedashboard/SettingAttendanc
 // auth imports
 import SignIn from "./auth/Signin";
 import OTP from "./auth/Otp.jsx";
+import Register from "./auth/Register.jsx";
+import ForgotPassword from "./auth/ForgotPassword.jsx";
+import ResetPassword from "./auth/ResetPassword.jsx";
+import RequestOtpSms from "./auth/RequestOtpSms.jsx";
+import VerifyOtp from "./auth/VerifyOtp.jsx";
 
 function App() {
   return (
@@ -53,12 +58,16 @@ function App() {
       </Route>
 
       {/* Redirect root to dashboard */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<Navigate to="/signin" replace />} />
 
       {/* Catch all */}
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
-
+      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/signin" element={<SignIn />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/request-otp" element={<RequestOtpSms />} />
+      <Route path="/verify-otp" element={<VerifyOtp />} />
       <Route path="/otp" element={<OTP />} />
     </Routes>
   );
