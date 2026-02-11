@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
         setUser(userData);
 
         // Optional: set axios default header for future requests
-        // axios.defaults.headers.common['Authorization'] = `Bearer ${apiToken}`;
+        axios.defaults.headers.common["Authorization"] = `Bearer ${apiToken}`;
 
         toast.success(response?.message || "Login successful!");
         navigate("/attendancedashboard"); // ← your desired route

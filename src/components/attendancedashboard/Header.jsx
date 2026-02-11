@@ -12,9 +12,9 @@ export default function Header({ onMenuClick, pageTitle = "Overview" }) {
         >
           <Menu size={28} />
         </button>
-        <h2 className="text-xl font-semibold text-[#1A1A1A] block">
+        <div className="text-xl font-semibold text-[#1A1A1A] block">
           {pageTitle}
-        </h2>
+        </div>
       </div>
 
       {/* Right: Notification + Avatar + Name */}
