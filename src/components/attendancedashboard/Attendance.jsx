@@ -18,6 +18,7 @@ const Attendance = () => {
   const [clockInTime, setClockInTime] = useState(null); // to show actual time
   // Add this line with the other useState calls
   const [hasClockedOut, setHasClockedOut] = useState(false);
+  const [clockOutTime, setClockOutTime] = useState(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -92,6 +93,7 @@ const Attendance = () => {
       if (res.data.status === "200") {
         toast.success("Clocked out successfully!");
         setHasClockedOut(true);
+        setClockOutTime(new Date()); // ← add this line
       } else {
         toast.error(res.data.message || "Clock out failed");
       }
@@ -187,6 +189,7 @@ const Attendance = () => {
                     ? "Clocked In"
                     : "CLOCK IN"}
               </button>
+
               {hasClockedIn && clockInTime && (
                 <p className="text-center text-sm text-green-700 mt-3">
                   Clocked in at {formatTime(clockInTime)}
@@ -222,6 +225,12 @@ const Attendance = () => {
                     ? "Clocked Out"
                     : "CLOSE OUT"}
               </button>
+
+              {hasClockedOut && clockOutTime && (
+                <p className="text-center text-sm text-red-700 mt-3">
+                  Clocked out at {formatTime(clockOutTime)}
+                </p>
+              )}
             </div>
           </div>
 
