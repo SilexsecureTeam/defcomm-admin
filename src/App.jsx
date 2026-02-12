@@ -51,7 +51,7 @@ function App() {
       >
         <Route index element={<AttendanceOverview />} />
         <Route path="events" element={<AttendanceEvent />} />
-        <Route path="attendance" element={<Attendance />} />
+        <Route path="attendance/:registrationId" element={<Attendance />} />
         <Route path="certificates" element={<CertificateAttendance />} />
         <Route path="souvenir" element={<SouvenirAttendance />} />
         <Route path="setting" element={<SettingAttendance />} />

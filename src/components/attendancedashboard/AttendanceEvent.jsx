@@ -178,7 +178,10 @@ const AttendanceEvent = () => {
           </div>
         </div>
 
-        <Link to={`/attendancedashboard/attendance`}>
+        <Link
+          to={`/attendancedashboard/attendance/${registration.id}`}
+          state={{ registration }} // ← this is the critical line
+        >
           <button className="w-full mt-2 bg-[#85AB20]/50 hover:bg-[#85AB20]/70 text-[#36460A] font-medium py-2.5 px-4 rounded-md transition-colors">
             View Details
           </button>
