@@ -58,7 +58,7 @@ const CertificateAttendance = () => {
 
   return (
     <div className="min-h-screen bg-[#F8F9FB] p-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto hidden">
         {/* Tab Navigation */}
         <div className=" mb-6">
           <nav className="flex space-x-8 ">

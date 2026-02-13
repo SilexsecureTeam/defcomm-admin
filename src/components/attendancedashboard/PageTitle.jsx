@@ -1,15 +1,19 @@
 import { useLocation } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export default function PageTitle() {
   const location = useLocation();
   const path = location.pathname;
+  const { user } = useAuth();
+
+  const displayName = user?.name;
 
   if (path === "/attendancedashboard")
     return (
       <>
         {" "}
         <h2 className="text-lg md:text-xl font-semibold text-[#1A1A1A] block">
-          Welcome back, Chris
+          Welcome back {displayName.split(" ")[0]}
         </h2>{" "}
         <p className="text-sm md:text-base font-semibold text-[#333333] block">
           Monday, 8 December 2025

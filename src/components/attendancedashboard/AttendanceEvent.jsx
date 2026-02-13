@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Search, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from "../../context/AuthContext"; // adjust path if needed
+import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 
 const BASE_URL = "https://backend.defcomm.ng/api";
@@ -20,6 +20,31 @@ const AttendanceEvent = () => {
   const itemsPerPage = 12;
   const tabs = ["All", "Upcoming", "Ongoing", "Past", "Registered"];
 
+  // Skeleton loader component (single card)
+  const SkeletonEventCard = () => (
+    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 animate-pulse">
+      <div className="flex justify-between items-start mb-4">
+        <div className="h-6 w-24 bg-gray-200 rounded-full"></div>
+        <div className="h-6 w-20 bg-gray-200 rounded-full"></div>
+      </div>
+
+      <div className="h-7 w-3/4 bg-gray-200 rounded mb-3"></div>
+
+      <div className="space-y-3 mb-6">
+        <div className="flex items-center">
+          <div className="h-5 w-5 bg-gray-200 rounded mr-2"></div>
+          <div className="h-5 w-40 bg-gray-200 rounded"></div>
+        </div>
+        <div className="flex items-center">
+          <div className="h-5 w-5 bg-gray-200 rounded mr-2"></div>
+          <div className="h-5 w-56 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+
+      <div className="h-11 w-full bg-gray-200 rounded-md"></div>
+    </div>
+  );
+
   useEffect(() => {
     const fetchRegistrations = async () => {
       if (!token || authLoading) return;
@@ -34,28 +59,21 @@ const AttendanceEvent = () => {
 
         const data = res.data?.data || [];
 
-        // Enrich / normalize data
+        // Your existing enrichment logic (unchanged)
         const enriched = data.map((reg) => {
           const desc = reg.description || "";
           let eventTitle = "Registered Event";
           let eventDate = "TBD";
           let eventLocation = "TBD";
 
-          // Extract DATE
           const dateMatch = desc.match(/Date:\s*<strong>(.*?)<\/strong>/i);
-          if (dateMatch) {
-            eventDate = dateMatch[1].trim();
-          }
+          if (dateMatch) eventDate = dateMatch[1].trim();
 
-          // Extract VENUE
           const venueMatch = desc.match(/Venue:\s*<strong>(.*?)<\/strong>/i);
           if (venueMatch) {
             eventLocation = venueMatch[1].trim().replace(/&amp;/g, "&");
           }
 
-          // ── Improved TITLE extraction ──────────────────────────────
-          // Priority 1: Most precise - capture only the event name between "for" and "by DEFCOMM"
-          // Ignores "registering as a guest" completely
           const preciseMatch = desc.match(
             /for\s+(?:registering as a guest\s+)?(.+?)\s+by\s+defcomm/i,
           );
@@ -63,29 +81,22 @@ const AttendanceEvent = () => {
           if (preciseMatch && preciseMatch[1]) {
             eventTitle = preciseMatch[1].trim();
           } else {
-            // Priority 2: Fallback - take after "for" and clean up prefixes
             const fallbackMatch = desc.match(
               /for\s+(.+?)(?:\s+by\s+defcomm|\.|<br>|thank you)/i,
             );
 
             if (fallbackMatch && fallbackMatch[1]) {
               let candidate = fallbackMatch[1].trim();
-
-              // Remove common unwanted prefixes
               candidate = candidate
                 .replace(
                   /^(registering as a guest\s+for|registering as a guest|guest\s+for|as a guest\s+for|participating in)\s*/i,
                   "",
                 )
                 .trim();
-
-              if (candidate) {
-                eventTitle = candidate;
-              }
+              if (candidate) eventTitle = candidate;
             }
           }
 
-          // Capitalize each word for better display
           eventTitle = eventTitle.replace(/\b\w/g, (c) => c.toUpperCase());
 
           return {
@@ -114,12 +125,11 @@ const AttendanceEvent = () => {
     fetchRegistrations();
   }, [token, authLoading]);
 
-  // Filter
+  // Filter & pagination logic (unchanged)
   const filtered = registrations
     .filter((reg) => {
       if (activeTab === "All") return true;
       if (activeTab === "Registered") return reg.displayStatus === "Registered";
-      // For Upcoming/Past/Ongoing → placeholder for now
       return true;
     })
     .filter(
@@ -128,7 +138,6 @@ const AttendanceEvent = () => {
         reg.displayLocation?.toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
-  // Pagination
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const start = (currentPage - 1) * itemsPerPage;
   const currentItems = filtered.slice(start, start + itemsPerPage);
@@ -180,7 +189,7 @@ const AttendanceEvent = () => {
 
         <Link
           to={`/attendancedashboard/attendance/${registration.id}`}
-          state={{ registration }} // ← this is the critical line
+          state={{ registration }}
         >
           <button className="w-full mt-2 bg-[#85AB20]/50 hover:bg-[#85AB20]/70 text-[#36460A] font-medium py-2.5 px-4 rounded-md transition-colors">
             View Details
@@ -190,12 +199,28 @@ const AttendanceEvent = () => {
     );
   };
 
+  // ── Loading state with skeletons ────────────────────────────────────────
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-[#F8F9FB] flex items-center justify-center">
-        <p className="text-lg text-gray-600">
-          Loading your registered events...
-        </p>
+      <div className="min-h-screen bg-[#F8F9FB] p-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Header skeleton (tabs + search) */}
+          <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-pulse">
+            <div className="flex gap-2">
+              {tabs.map((_, i) => (
+                <div key={i} className="h-10 w-20 bg-gray-200 rounded-md"></div>
+              ))}
+            </div>
+            <div className="h-10 w-full md:w-64 bg-gray-200 rounded-md"></div>
+          </div>
+
+          {/* Grid of skeleton cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <SkeletonEventCard key={index} />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

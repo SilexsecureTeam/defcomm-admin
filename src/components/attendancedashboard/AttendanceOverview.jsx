@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Calendar,
   Clock,
@@ -15,53 +15,95 @@ import {
 } from "lucide-react";
 import { ChevronDown } from "lucide-react";
 import { CalendarClock } from "lucide-react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 
 const AttendanceOverview = () => {
+  const [registrations, setRegistrations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { token } = useAuth();
+
+  const BASE_URL = "https://backend.defcomm.ng/api";
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchEvents = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/user/event/register`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = res.data?.data || [];
+
+        const enriched = data.map((reg) => {
+          // Reuse same parsing logic you already have in AttendanceEvent
+          const desc = reg.description || "";
+          let eventTitle = "Event";
+          let eventDate = "TBD";
+          let eventLocation = "TBD";
+
+          const dateMatch = desc.match(/Date:\s*<strong>(.*?)<\/strong>/i);
+          if (dateMatch) eventDate = dateMatch[1].trim();
+
+          const venueMatch = desc.match(/Venue:\s*<strong>(.*?)<\/strong>/i);
+          if (venueMatch)
+            eventLocation = venueMatch[1].trim().replace(/&amp;/g, "&");
+
+          const titleMatch = desc.match(
+            /for\s+(?:registering as a guest\s+)?(.+?)\s+by\s+defcomm/i,
+          );
+          if (titleMatch) {
+            eventTitle = titleMatch[1].trim();
+          }
+
+          eventTitle = eventTitle.replace(/\b\w/g, (c) => c.toUpperCase());
+
+          return {
+            ...reg,
+            displayTitle: eventTitle,
+            displayDate: eventDate,
+            displayLocation: eventLocation,
+          };
+        });
+
+        setRegistrations(enriched.slice(0, 3)); // show only 3 recent/last ones
+      } catch (err) {
+        console.error(err);
+        toast.error("Could not load recent events");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, [token]);
+
   const statsCards = [
     {
       icon: Calendar,
       label: "Events Attended",
-      value: "50",
+      value: "0",
       bgColor: "bg-white",
     },
     {
       icon: Clock,
       label: "Next Event Starts In",
-      value: "2 days",
+      value: ".....",
       bgColor: "bg-white",
     },
     {
       icon: Award,
       label: "Certificates Earned",
-      value: "05",
+      value: "0",
       bgColor: "bg-white",
     },
     {
       icon: Gift,
       label: "Souvenirs Claimed",
-      value: "02",
+      value: "0",
       bgColor: "bg-white",
-    },
-  ];
-
-  const reports = [
-    {
-      title: "DefComm Cyber Readiness Bootcamp",
-      status: "Create report",
-      date: "January 12, 2026, 9:00 GMT",
-      training: "DefComm Training Hub, Lagos",
-    },
-    {
-      title: "DefComm Cyber Readiness Bootcamp",
-      status: "Create report",
-      date: "January 18, 2026, 9:00 GMT",
-      training: "DefComm Training Hub, Lagos",
-    },
-    {
-      title: "DefComm Cyber Readiness Bootcamp",
-      status: "Create report",
-      date: "January 12, 2026, 9:00 GMT",
-      training: "DefComm Training Hub, Lagos",
     },
   ];
 
@@ -180,28 +222,60 @@ const AttendanceOverview = () => {
           Select date
           <ChevronDown className="w-4 h-4" />
         </button>
-        <div className=" ">
+        <div className="">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {reports.map((report, index) => (
-              <div
-                key={index}
-                className="bg-white shadow-sm border border-gray-200 rounded-lg p-4"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-lg  text-[#1A1A1A] flex-1">
-                    {report.title}
-                  </h3>
-                  <span className="px-3 py-2 bg-[#14D50A]/20 text-[#26C640] text-xs rounded-full whitespace-nowrap ml-2">
-                    {report.status}
-                  </span>
+            {loading ? (
+              // Show 3 skeleton cards while loading (matches the 3-column layout)
+              Array.from({ length: 3 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-white shadow-sm border border-gray-200 rounded-lg p-4 animate-pulse"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="h-7 w-3/4 bg-gray-200 rounded"></div>
+                    <div className="h-8 w-24 bg-gray-200 rounded-full"></div>
+                  </div>
+                  <div className="h-5 w-48 bg-gray-200 rounded mb-1"></div>
+                  <div className="h-5 w-56 bg-gray-200 rounded mb-4"></div>
+                  <div className="h-11 w-full bg-gray-200 rounded-lg"></div>
                 </div>
-                <p className="text-sm text-[#8A8A8A] mb-1">{report.date}</p>
-                <p className="text-sm text-[#8A8A8A] mb-4">{report.training}</p>
-                <button className="w-full py-2 bg-[#85AB20]/50 hover:bg-[#85AB20]/70 text-[#85AB20] text-base font-medium rounded-lg">
-                  View Details
-                </button>
-              </div>
-            ))}
+              ))
+            ) : registrations.length === 0 ? (
+              <p className="text-center col-span-3 py-12 text-gray-600 font-medium">
+                No recent events found
+              </p>
+            ) : (
+              registrations.map((report, index) => (
+                <div
+                  key={index}
+                  className="bg-white shadow-sm border border-gray-200 rounded-lg p-4 hover:shadow transition-shadow"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="text-lg text-[#1A1A1A] flex-1 line-clamp-2">
+                      {report.displayTitle}
+                    </h3>
+                    <span className="px-3 py-2 bg-[#14D50A]/20 text-[#26C640] text-xs rounded-full whitespace-nowrap ml-2 flex-shrink-0">
+                      View report
+                    </span>
+                  </div>
+                  <p className="text-sm text-[#8A8A8A] mb-1">
+                    {report.displayDate || "Date not available"}
+                  </p>
+                  <p className="text-sm text-[#8A8A8A] mb-4">
+                    {report.displayLocation || "DefComm Training Hub, Lagos"}
+                  </p>
+                  <Link
+                    to={`/attendancedashboard/attendance/${report.id}`}
+                    state={{ registration: report }}
+                    className="block w-full"
+                  >
+                    <button className="w-full py-2 bg-[#85AB20]/50 hover:bg-[#85AB20]/70 text-[#85AB20] text-base font-medium rounded-lg transition-colors">
+                      View Details
+                    </button>
+                  </Link>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -291,14 +365,18 @@ const AttendanceOverview = () => {
                   { label: "Activity", icon: Activity },
                   { label: "Event", icon: CalendarClock },
                   { label: "Certificate", icon: Award },
-                ].map(({ label, icon: Icons }) => (
-                  <div key={label} className="flex items-center gap-1">
-                    <Icons className="w-5 h-5 text-[#85AB20]" />
-                    <span className="text-sm font-medium text-[#1A1A1A]">
-                      {label}
-                    </span>
-                  </div>
-                ))}
+                ].map(
+                  (
+                    { label, icon: Icon }, // ← renamed to Icon (capital I is convention for components)
+                  ) => (
+                    <div key={label} className="flex items-center gap-1">
+                      <Icon className="w-5 h-5 text-[#85AB20]" />
+                      <span className="text-sm font-medium text-[#1A1A1A]">
+                        {label}
+                      </span>
+                    </div>
+                  ),
+                )}
               </div>
             </div>
 

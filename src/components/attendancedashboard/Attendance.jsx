@@ -107,10 +107,10 @@ const Attendance = () => {
   };
 
   const stats = [
-    { icon: Calendar, label: "Events Attended", value: "50" },
-    { icon: Clock, label: "Next Event Starts In", value: "2 days" },
-    { icon: Award, label: "Certificates Earned", value: "05" },
-    { icon: Gift, label: "Souvenirs Claimed", value: "02" },
+    { icon: Calendar, label: "Events Attended", value: "0" },
+    { icon: Clock, label: "Next Event Starts In", value: "..." },
+    { icon: Award, label: "Certificates Earned", value: "0" },
+    { icon: Gift, label: "Souvenirs Claimed", value: "0" },
   ];
 
   const presentCount = 90;
@@ -223,7 +223,7 @@ const Attendance = () => {
                   ? "Clocking Out..."
                   : hasClockedOut
                     ? "Clocked Out"
-                    : "CLOSE OUT"}
+                    : "CLOCK OUT"}
               </button>
 
               {hasClockedOut && clockOutTime && (
