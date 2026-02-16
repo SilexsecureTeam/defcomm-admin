@@ -35,7 +35,7 @@ export default function Header({ onMenuClick, pageTitle = "Overview" }) {
           <img
             src={avatar}
             alt="User avatar"
-            className="w-10 h-10 rounded-full object-cover border-2 border-gray-700"
+            className="w-10 h-10 hidden rounded-full object-cover border-2 border-gray-700"
           />
           <div className="hidden lg:block flex flex-col gap-2">
             <p className="text-sm font-medium text-[#1A1A1A]">

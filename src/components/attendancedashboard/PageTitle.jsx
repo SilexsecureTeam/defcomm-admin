@@ -8,18 +8,31 @@ export default function PageTitle() {
 
   const displayName = user?.name;
 
+  // Dynamic current date in "Monday, 8 December 2025" format
+  const getCurrentDate = () => {
+    const today = new Date();
+    const options = {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    };
+    return today.toLocaleDateString("en-GB", options); // "en-GB" gives "Monday, 8 December 2025" style
+  };
+
   if (path === "/attendancedashboard")
     return (
       <>
         {" "}
         <h2 className="text-lg md:text-xl font-semibold text-[#1A1A1A] block">
-          Welcome back {displayName.split(" ")[0]}
+          Welcome back {displayName?.split(" ")[0] || "User"}
         </h2>{" "}
         <p className="text-sm md:text-base font-semibold text-[#333333] block">
-          Monday, 8 December 2025
+          {getCurrentDate()}
         </p>{" "}
       </>
     );
+
   if (path === "/attendancedashboard/events")
     return (
       <>
@@ -32,6 +45,7 @@ export default function PageTitle() {
         </p>{" "}
       </>
     );
+
   if (path === "/attendancedashboard/attendance")
     return (
       <>
@@ -44,6 +58,7 @@ export default function PageTitle() {
         </p>{" "}
       </>
     );
+
   if (path === "/attendancedashboard/certificates")
     return (
       <>
@@ -56,6 +71,7 @@ export default function PageTitle() {
         </p>{" "}
       </>
     );
+
   if (path === "/attendancedashboard/souvenir")
     return (
       <>
@@ -68,6 +84,7 @@ export default function PageTitle() {
         </p>{" "}
       </>
     );
+
   if (path === "/attendancedashboard/setting")
     return (
       <>

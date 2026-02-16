@@ -15,7 +15,7 @@ import AttendanceDashboardLayout from "./pages/AttendanceDashboardLayout";
 import AttendanceOverview from "./components/attendancedashboard/AttendanceOverview";
 import AttendanceEvent from "./components/attendancedashboard/AttendanceEvent.jsx";
 import Attendance from "./components/attendancedashboard/Attendance.jsx";
-import CertificateAttendance from "./components/attendancedashboard/CertificateAttendance.jsx";
+import Certificate from "./components/attendancedashboard/Certificate.jsx";
 import SouvenirAttendance from "./components/attendancedashboard/SouvenirAttendance.jsx";
 import SettingAttendance from "./components/attendancedashboard/SettingAttendance.jsx";
 // auth imports
@@ -52,7 +52,7 @@ function App() {
         <Route index element={<AttendanceOverview />} />
         <Route path="events" element={<AttendanceEvent />} />
         <Route path="attendance/:registrationId" element={<Attendance />} />
-        <Route path="certificates" element={<CertificateAttendance />} />
+        <Route path="certificates" element={<Certificate />} />
         <Route path="souvenir" element={<SouvenirAttendance />} />
         <Route path="setting" element={<SettingAttendance />} />
       </Route>

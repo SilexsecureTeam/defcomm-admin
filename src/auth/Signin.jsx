@@ -336,7 +336,7 @@ const SignIn = () => {
                 Forgot Password?
               </button>
             )}
-            <p className="mt-3">
+            <p className="mt-3 hidden">
               Don't have an account?{" "}
               <button
                 onClick={() => navigate("/register")}

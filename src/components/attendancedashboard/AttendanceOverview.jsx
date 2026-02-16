@@ -269,7 +269,7 @@ const AttendanceOverview = () => {
                     state={{ registration: report }}
                     className="block w-full"
                   >
-                    <button className="w-full py-2 bg-[#85AB20]/50 hover:bg-[#85AB20]/70 text-[#85AB20] text-base font-medium rounded-lg transition-colors">
+                    <button className="w-full py-2 bg-[#85AB20] hover:bg-[#85AB20]/70 text-white text-base font-medium rounded-lg transition-colors">
                       View Details
                     </button>
                   </Link>
@@ -283,7 +283,7 @@ const AttendanceOverview = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="grid gap-6">
             {/* Attendance Summary */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-lg h-fit shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-[#1A1A1A]">
                   Attendance Summary
@@ -295,7 +295,7 @@ const AttendanceOverview = () => {
               <div className="space-y-4">
                 <div>
                   <p className="text-sm text-[#333333] mb-2">
-                    Events Attended : 3/4
+                    Events Attended : 0/1
                   </p>
                   <p className="text-sm text-[#8A8A8A]">
                     Next event: Threat Intelligence Workshop
@@ -304,17 +304,17 @@ const AttendanceOverview = () => {
                 <div className="bg-[#000000]/10 rounded-lg h-2 overflow-hidden">
                   <div
                     className="bg-[#36460A] h-full"
-                    style={{ width: "70%" }}
+                    style={{ width: "0%" }}
                   ></div>
                 </div>
                 <p className="text-right text-sm font-semibold text-[#1A1A1A]">
-                  70% complete
+                  0% complete
                 </p>
               </div>
             </div>
 
             {/* Recent Certificates */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="bg-white hidden rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Recent Certificates
               </h2>
@@ -345,7 +345,7 @@ const AttendanceOverview = () => {
           </div>
 
           {/* Recent Activities */}
-          <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="lg:col-span-2 hidden bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-900">
                 Recent activities
