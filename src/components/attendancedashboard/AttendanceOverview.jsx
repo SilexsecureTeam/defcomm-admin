@@ -222,8 +222,8 @@ const AttendanceOverview = () => {
           Select date
           <ChevronDown className="w-4 h-4" />
         </button>
-        <div className="">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
             {loading ? (
               // Show 3 skeleton cards while loading (matches the 3-column layout)
               Array.from({ length: 3 }).map((_, index) => (
@@ -277,11 +277,7 @@ const AttendanceOverview = () => {
               ))
             )}
           </div>
-        </div>
-
-        {/* Bottom Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="grid gap-6">
+          <div className="lg:col-span-1 grid gap-6 ">
             {/* Attendance Summary */}
             <div className="bg-white rounded-lg h-fit shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
@@ -297,8 +293,80 @@ const AttendanceOverview = () => {
                   <p className="text-sm text-[#333333] mb-2">
                     Events Attended : 0/1
                   </p>
-                  <p className="text-sm text-[#8A8A8A]">
-                    Next event: Threat Intelligence Workshop
+                  <p className="text-sm text-[#333333]">
+                    Next event:{" "}
+                    <span className="font-bold">
+                      Securing Communications, Systems, and Skies
+                    </span>
+                  </p>
+                </div>
+                <div className="bg-[#000000]/10 rounded-lg h-2 overflow-hidden">
+                  <div
+                    className="bg-[#36460A] h-full"
+                    style={{ width: "0%" }}
+                  ></div>
+                </div>
+                <p className="text-right text-sm font-semibold text-[#1A1A1A]">
+                  0% complete
+                </p>
+              </div>
+            </div>
+
+            {/* Recent Certificates */}
+            <div className="bg-white hidden rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Recent Certificates
+              </h2>
+              <div className="space-y-3">
+                {certificates.map((cert, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-[#85AB20]/20 rounded-lg flex items-center justify-center">
+                        <Award className="w-5 h-5 text-[#85AB20]" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {cert.id}
+                        </p>
+                        <p className="text-xs text-[#8A8A8A]">{cert.name}</p>
+                      </div>
+                    </div>
+                    <button className="px-4 py-2 text-[#85AB20] text-sm rounded-lg flex items-center gap-2">
+                      Download
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid gap-6">
+            {/* Attendance Summary */}
+            <div className="bg-white hidden rounded-lg h-fit shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-[#1A1A1A]">
+                  Attendance Summary
+                </h2>
+                <button className="text-sm text-[#1A1A1A] hover:text-[#1A1A1A]/80">
+                  View
+                </button>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-[#333333] mb-2">
+                    Events Attended : 0/1
+                  </p>
+                  <p className="text-sm text-[#333333]">
+                    Next event:{" "}
+                    <span className="font-bold">
+                      Securing Communications, Systems, and Skies
+                    </span>
                   </p>
                 </div>
                 <div className="bg-[#000000]/10 rounded-lg h-2 overflow-hidden">
