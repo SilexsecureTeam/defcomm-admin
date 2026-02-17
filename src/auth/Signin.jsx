@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import logo from "../assets/logoss.svg";
-import logos from "../assets/afri2.png";
+import logos from "../assets/afri3.svg";
 import afri from "../assets/afri.png";
 // import bgImage from "../assets/defcoobg.jpg";
 import { toast } from "react-toastify";
@@ -144,7 +144,7 @@ const SignIn = () => {
       <div className="flex flex-col justify-center w-full lg:w-1/2 px-12 lg:px-20 py-12 relative z-10">
         <div className="bg-white backdrop-blur-sm rounded-2xl w-full max-w-md p-8 lg:p-10 flex flex-col items-center mx-auto shadow-2xl">
           <h1 className="text-gray-900 text-xl font-bold mb-6">Sign In</h1>
-          <img src={logos} alt="Logo" className="w-42 h-auto mx-4" />
+          <img src={logos} alt="Logo" className="w-48 h-auto " />
           {/* Tabs */}
           <div className="flex w-full mb-6 border-b">
             <button
