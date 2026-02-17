@@ -133,7 +133,7 @@ const SignIn = () => {
           className="w-[65%] max-w-[800px] h-[80%] object-contain"
         />
       </div>
-      <div className="hidden lg:flex flex-col justify-center w-1/2 px-5 relative z-10">
+      <div className="hidden lg:flex flex-col justify-center w-1/2 px-5 md:pl-20 relative z-10">
         <div className="flex flex-col items-center lg:items-start">
           <Link to="/" className="mb-7">
             <img src={logo} alt="Logo" className="w-52 h-auto md:w-140" />
