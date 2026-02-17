@@ -122,7 +122,7 @@ const SignIn = () => {
       className="min-h-screen flex flex-col lg:flex-row font-sans"
       style={{
         background:
-          "linear-gradient(to bottom, #212B06 0%, #0a0f02 60%, #020202100%)",
+          "linear-gradient(to bottom, #212B06 0%, #0a0f02 60%, #020202 100%)",
       }}
     >
       {/* Centered afri background layer */}
