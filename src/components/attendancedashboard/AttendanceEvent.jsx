@@ -58,7 +58,7 @@ const AttendanceEvent = () => {
         });
 
         const data = res.data?.data || [];
-        console.log(data);
+        // console.log(data);
 
         // Your existing enrichment logic (unchanged)
         const enriched = data.map((reg) => {

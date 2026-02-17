@@ -1,5 +1,5 @@
 import React from "react";
-import cer from "../../assets/certificate.png";
+import cer from "../../assets/certificate.svg";
 
 const Certificate = () => {
   return (
@@ -9,7 +9,7 @@ const Certificate = () => {
         <img
           src={cer}
           alt="certificate-img"
-          className="mx-auto max-w-3xl w-full"
+          className="mx-auto max-w-4xl w-full"
         />
 
         {/* Download Button - Disabled for now */}

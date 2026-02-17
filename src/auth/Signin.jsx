@@ -1,13 +1,15 @@
 // src/auth/SignIn.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import logo from "../assets/Defcomm-04 2.svg";
-import bgImage from "../assets/defcoobg.jpg";
+import { useNavigate, Link } from "react-router-dom";
+import logo from "../assets/logoss.svg";
+import logos from "../assets/afri2.png";
+import afri from "../assets/afri.png";
+// import bgImage from "../assets/defcoobg.jpg";
 import { toast } from "react-toastify";
 import axios from "axios";
 import "../index.css";
-import OtpInput from "../components/OtpInput"; // ← reuse the 4-box OTP component
+import OtpInput from "../components/OtpInput";
 
 const BASE_URL = "https://backend.defcomm.ng/api";
 
@@ -119,26 +121,30 @@ const SignIn = () => {
     <div
       className="min-h-screen flex flex-col lg:flex-row font-sans"
       style={{
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        background:
+          "linear-gradient(to bottom, #212B06 0%, #0a0f02 60%, #020202100%)",
       }}
     >
-      <div className="hidden lg:flex flex-col justify-center w-1/2 px-10 pt-15">
+      {/* Centered afri background layer */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 opacity-40">
+        <img
+          src={afri} // ← using afri.png — change to logos if you prefer afri2.png
+          alt="Afri background"
+          className="w-[65%] max-w-[800px] h-[80%] object-contain"
+        />
+      </div>
+      <div className="hidden lg:flex flex-col justify-center w-1/2 px-10 pt-15 relative z-10">
         <div className="flex flex-col items-center lg:items-start">
-          <a href="#" className="mb-7">
-            <img src={logo} alt="Logo" className="w-52 h-auto" />
-          </a>
-          <h2 className="text-white text-xl lg:text-2xl font-normal">
-            Redefining Defence, Communication
-          </h2>
+          <Link to="/" className="mb-7">
+            <img src={logo} alt="Logo" className="w-52 h-auto md:w-120" />
+          </Link>
         </div>
       </div>
 
-      <div className="flex flex-col justify-center w-full lg:w-1/2 px-12 lg:px-20 py-12">
-        <div className="bg-white rounded-2xl w-full max-w-md p-8 lg:p-10 flex flex-col items-center mx-auto">
-          <h1 className="text-gray-900 text-2xl font-bold mb-6">Sign In</h1>
-
+      <div className="flex flex-col justify-center w-full lg:w-1/2 px-12 lg:px-20 py-12 relative z-10">
+        <div className="bg-white backdrop-blur-sm rounded-2xl w-full max-w-md p-8 lg:p-10 flex flex-col items-center mx-auto shadow-2xl">
+          <h1 className="text-gray-900 text-xl font-bold mb-6">Sign In</h1>
+          <img src={logos} alt="Logo" className="w-42 h-auto mx-4" />
           {/* Tabs */}
           <div className="flex w-full mb-6 border-b">
             <button
