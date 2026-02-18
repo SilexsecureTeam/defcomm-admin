@@ -10,10 +10,11 @@ import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
+    
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-        <ToastContainer
+  <AuthProvider>
+    <App />
+     <ToastContainer
           position="top-right"
           autoClose={5000}
           hideProgressBar={false}
@@ -25,7 +26,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           pauseOnHover
           theme="colored"
         />
-      </AuthProvider>
-    </BrowserRouter>
+  </AuthProvider>
+</BrowserRouter>
+
+    
   </React.StrictMode>,
 );

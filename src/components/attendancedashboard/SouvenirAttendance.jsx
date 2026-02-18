@@ -131,15 +131,11 @@ const SouvenirAttendance = () => {
             {filteredSouvenirs.map((souvenir) => (
               <div
                 key={souvenir.id}
-                className="bg-white p-4 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                className="bg-white pb-4 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
               >
                 {/* Real Image */}
                 {souvenir.image ? (
-                  <img
-                    src={souvenir.image}
-                    alt={souvenir.name}
-                    className="w-full h-48 object-contain mx-auto"
-                  />
+                <img src={souvenir.image} alt={souvenir.name} className="w-full h-48 object-cover mx-auto" />
                 ) : (
                   <div className="bg-[#333333] h-48 flex items-center justify-center text-white">
                     No Image
@@ -147,7 +143,7 @@ const SouvenirAttendance = () => {
                 )}
 
                 {/* Card Content */}
-                <div className="mt-6">
+                <div className="mt-6 px-4">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-semibold text-[#1A1A1A] flex-1">
                       {souvenir.name}

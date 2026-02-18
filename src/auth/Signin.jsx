@@ -7,11 +7,13 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import "../index.css";
 import OtpInput from "../components/OtpInput";
+import { useAuth } from "../context/AuthContext";   // adjust path if needed
 
 const BASE_URL = "https://backend.defcomm.ng/api";
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const { setToken, setUser } = useAuth();  // Correctly used here (top level)
 
   // Tab state: "email" or "phone"
   const [activeTab, setActiveTab] = useState("email");
@@ -28,19 +30,42 @@ const SignIn = () => {
   const [isPhoneSubmitting, setIsPhoneSubmitting] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
 
-  // ── Shared success check logic ──
+  // ── Shared success logic ──
   const handleSuccessfulLogin = (responseData) => {
-    const apiToken = responseData?.data?.access_token;
-    const userData  = responseData?.data?.user;
+    const apiToken =
+      responseData?.data?.access_token ||
+      responseData?.access_token ||
+      responseData?.token;
 
-    if (apiToken && userData) {
-      sessionStorage.setItem("authToken", apiToken);
-      sessionStorage.setItem("authUser", JSON.stringify(userData));
-      toast.success(responseData?.message || "Login successful!");
-      navigate("/attendancedashboard");
-      return true;
+    if (!apiToken) {
+      console.warn("No access_token found in response");
+      return false;
     }
-    return false;
+
+    const userData =
+      responseData?.data?.user ||
+      responseData?.user ||
+      responseData?.data ||
+      {};
+
+    // Save to storage
+    sessionStorage.setItem("authToken", apiToken);
+    sessionStorage.setItem("authUser", JSON.stringify(userData));
+
+    // MOST IMPORTANT: Update context state immediately
+    setToken(apiToken);
+    setUser(userData);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${apiToken}`;
+
+    console.log("[handleSuccessfulLogin] Context updated → token:", apiToken.substring(0, 10) + "...");
+    console.log("[handleSuccessfulLogin] sessionStorage now has token:", !!sessionStorage.getItem("authToken"));
+
+    toast.success(responseData?.message || "Login successful!");
+
+    // Navigate after state update
+    navigate("/attendancedashboard", { replace: true });
+
+    return true;
   };
 
   // ── Email OTP Handlers ──
@@ -87,26 +112,21 @@ const SignIn = () => {
       const res = await axios.post(`${BASE_URL}/loginWithPhone`, payload);
       const resp = res.data;
 
-      // ── Improved response handling ──
       if (resp?.status === 200) {
-        // Check for success indicators
         const isSuccess =
           resp.message?.toLowerCase().includes("success") ||
           resp.message?.toLowerCase().includes("successful") ||
-          resp.data?.access_token; // fallback if token is present
+          resp.data?.access_token;
 
-        if (isSuccess) {
-          if (handleSuccessfulLogin(resp)) {
-            return; // success → stop here
-          }
+        if (isSuccess && handleSuccessfulLogin(resp)) {
+          return; // success
         }
 
-        // If we reach here → logical failure even if HTTP 200
         const errorText =
           resp?.data?.original?.error ||
           resp?.data?.error ||
           resp?.message ||
-          "Login failed - account issue";
+          "Login failed - unexpected response";
 
         toast.error(errorText);
         console.warn("Login response (failure detected):", resp);
@@ -121,7 +141,7 @@ const SignIn = () => {
         err.message ||
         "Something went wrong. Please try again.";
       toast.error(msg);
-      console.error("Email login error:", err);
+      console.error("Email OTP login error:", err);
     } finally {
       setIsEmailSubmitting(false);
     }
@@ -171,24 +191,21 @@ const SignIn = () => {
       const res = await axios.post(`${BASE_URL}/loginWithPhone`, payload);
       const resp = res.data;
 
-      // Same improved handling as email
       if (resp?.status === 200) {
         const isSuccess =
           resp.message?.toLowerCase().includes("success") ||
           resp.message?.toLowerCase().includes("successful") ||
           resp.data?.access_token;
 
-        if (isSuccess) {
-          if (handleSuccessfulLogin(resp)) {
-            return;
-          }
+        if (isSuccess && handleSuccessfulLogin(resp)) {
+          return; // success
         }
 
         const errorText =
           resp?.data?.original?.error ||
           resp?.data?.error ||
           resp?.message ||
-          "Login failed - account issue";
+          "Login failed - unexpected response";
 
         toast.error(errorText);
         console.warn("Login response (failure detected):", resp);
@@ -203,7 +220,7 @@ const SignIn = () => {
         err.message ||
         "Something went wrong. Please try again.";
       toast.error(msg);
-      console.error("Phone login error:", err);
+      console.error("Phone OTP login error:", err);
     } finally {
       setIsPhoneSubmitting(false);
     }
