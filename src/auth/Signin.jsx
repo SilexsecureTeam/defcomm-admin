@@ -57,8 +57,8 @@ const SignIn = () => {
     setUser(userData);
     axios.defaults.headers.common["Authorization"] = `Bearer ${apiToken}`;
 
-    console.log("[handleSuccessfulLogin] Context updated → token:", apiToken.substring(0, 10) + "...");
-    console.log("[handleSuccessfulLogin] sessionStorage now has token:", !!sessionStorage.getItem("authToken"));
+    // console.log("[handleSuccessfulLogin] Context updated → token:", apiToken.substring(0, 10) + "...");
+    // console.log("[handleSuccessfulLogin] sessionStorage now has token:", !!sessionStorage.getItem("authToken"));
 
     toast.success(responseData?.message || "Login successful!");
 

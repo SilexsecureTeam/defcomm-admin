@@ -18,9 +18,9 @@ export const AuthProvider = ({ children }) => {
     const storedToken = sessionStorage.getItem("authToken");
     const storedUser = sessionStorage.getItem("authUser");
 
-    console.log("[AuthContext] Loading from storage → token:", !!storedToken);
-    console.log("[loadAuth] Read from storage → token:", storedToken?.substring(0,10) + "..." || "missing");
-    console.log("[loadAuth] Setting context token to:", !!storedToken);
+    // console.log("[AuthContext] Loading from storage → token:", !!storedToken);
+    // console.log("[loadAuth] Read from storage → token:", storedToken?.substring(0,10) + "..." || "missing");
+    // console.log("[loadAuth] Setting context token to:", !!storedToken);
 
     if (storedToken && storedUser) {
       try {
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
     // Listen for changes in storage (covers same-tab login/logout)
     const handleStorage = (e) => {
       if (e.key === "authToken" || e.key === "authUser") {
-        console.log("[AuthContext] Storage changed → re-loading");
+        // console.log("[AuthContext] Storage changed → re-loading");
         loadAuth();
       }
     };
@@ -89,7 +89,7 @@ export const AuthProvider = ({ children }) => {
         setUser(userData);
         axios.defaults.headers.common["Authorization"] = `Bearer ${apiToken}`;
 
-        console.log("[AuthContext] Login → context updated");
+        // console.log("[AuthContext] Login → context updated");
 
         toast.success(response?.message || "Login successful!");
 
@@ -131,7 +131,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-      console.trace("[AUTH] LOGOUT CALLED FROM HERE — check stack trace below");
+      // console.trace("[AUTH] LOGOUT CALLED FROM HERE — check stack trace below");
     sessionStorage.removeItem("authToken");
     sessionStorage.removeItem("authUser");
     delete axios.defaults.headers.common["Authorization"];

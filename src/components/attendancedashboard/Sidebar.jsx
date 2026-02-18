@@ -56,7 +56,7 @@ export default function Sidebar({
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLogoutClick = () => {
-     console.log("[Sidebar] Logout button clicked — opening modal");
+    //  console.log("[Sidebar] Logout button clicked — opening modal");
     setShowLogoutModal(true); // open modal
   };
 

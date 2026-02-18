@@ -43,20 +43,8 @@ const AttendanceOverview = () => {
   let displayLocation = reg.location?.trim() || "TBD";
 
   // Date: prefer started_at if available, else default
-  let displayDate = "March 15"; // your requested default for now
-  if (reg.started_at) {
-    try {
-      const startDate = new Date(reg.started_at);
-      if (!isNaN(startDate.getTime())) {
-        // Format as you like, e.g. "March 15, 2026" or "15 Mar 2026"
-        displayDate = startDate.toLocaleDateString("en-US", {
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        });
-      }
-    } catch {}
-  }
+   let displayDate = reg.started_at?.split('T')[0] || "March 15";
+
 
   // Capitalize title nicely
   displayTitle = displayTitle.replace(/\b\w/g, (c) => c.toUpperCase());
