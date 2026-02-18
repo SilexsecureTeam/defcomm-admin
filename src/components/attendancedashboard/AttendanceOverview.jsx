@@ -38,35 +38,37 @@ const AttendanceOverview = () => {
         const data = res.data?.data || [];
 
         const enriched = data.map((reg) => {
-          // Reuse same parsing logic you already have in AttendanceEvent
-          const desc = reg.description || "";
-          let eventTitle = "Event";
-          let eventDate = "TBD";
-          let eventLocation = "TBD";
+  // Prefer direct fields from API
+  let displayTitle   = reg.name?.trim() || "Event Registration";
+  let displayLocation = reg.location?.trim() || "TBD";
 
-          const dateMatch = desc.match(/Date:\s*<strong>(.*?)<\/strong>/i);
-          if (dateMatch) eventDate = dateMatch[1].trim();
-
-          const venueMatch = desc.match(/Venue:\s*<strong>(.*?)<\/strong>/i);
-          if (venueMatch)
-            eventLocation = venueMatch[1].trim().replace(/&amp;/g, "&");
-
-          const titleMatch = desc.match(
-            /for\s+(?:registering as a guest\s+)?(.+?)\s+by\s+defcomm/i,
-          );
-          if (titleMatch) {
-            eventTitle = titleMatch[1].trim();
-          }
-
-          eventTitle = eventTitle.replace(/\b\w/g, (c) => c.toUpperCase());
-
-          return {
-            ...reg,
-            displayTitle: eventTitle,
-            displayDate: eventDate,
-            displayLocation: eventLocation,
-          };
+  // Date: prefer started_at if available, else default
+  let displayDate = "March 15"; // your requested default for now
+  if (reg.started_at) {
+    try {
+      const startDate = new Date(reg.started_at);
+      if (!isNaN(startDate.getTime())) {
+        // Format as you like, e.g. "March 15, 2026" or "15 Mar 2026"
+        displayDate = startDate.toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
         });
+      }
+    } catch {}
+  }
+
+  // Capitalize title nicely
+  displayTitle = displayTitle.replace(/\b\w/g, (c) => c.toUpperCase());
+
+  return {
+    ...reg,
+    displayTitle,
+    displayDate,
+    displayLocation,
+    displayStatus: reg.status === "active" ? "Registered" : reg.status || "Unknown",
+  };
+});
 
         setRegistrations(enriched.slice(0, 3)); // show only 3 recent/last ones
       } catch (err) {

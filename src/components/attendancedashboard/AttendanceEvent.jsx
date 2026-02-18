@@ -60,55 +60,38 @@ const AttendanceEvent = () => {
         const data = res.data?.data || [];
         // console.log(data);
 
-        // Your existing enrichment logic (unchanged)
-        const enriched = data.map((reg) => {
-          const desc = reg.description || "";
-          let eventTitle = "Registered Event";
-          let eventDate = "TBD";
-          let eventLocation = "TBD";
+       const enriched = data.map((reg) => {
+  // Prefer direct fields from API
+  let displayTitle   = reg.name?.trim() || "Event Registration";
+  let displayLocation = reg.location?.trim() || "TBD";
 
-          const dateMatch = desc.match(/Date:\s*<strong>(.*?)<\/strong>/i);
-          if (dateMatch) eventDate = dateMatch[1].trim();
-
-          const venueMatch = desc.match(/Venue:\s*<strong>(.*?)<\/strong>/i);
-          if (venueMatch) {
-            eventLocation = venueMatch[1].trim().replace(/&amp;/g, "&");
-          }
-
-          const preciseMatch = desc.match(
-            /for\s+(?:registering as a guest\s+)?(.+?)\s+by\s+defcomm/i,
-          );
-
-          if (preciseMatch && preciseMatch[1]) {
-            eventTitle = preciseMatch[1].trim();
-          } else {
-            const fallbackMatch = desc.match(
-              /for\s+(.+?)(?:\s+by\s+defcomm|\.|<br>|thank you)/i,
-            );
-
-            if (fallbackMatch && fallbackMatch[1]) {
-              let candidate = fallbackMatch[1].trim();
-              candidate = candidate
-                .replace(
-                  /^(registering as a guest\s+for|registering as a guest|guest\s+for|as a guest\s+for|participating in)\s*/i,
-                  "",
-                )
-                .trim();
-              if (candidate) eventTitle = candidate;
-            }
-          }
-
-          eventTitle = eventTitle.replace(/\b\w/g, (c) => c.toUpperCase());
-
-          return {
-            ...reg,
-            displayTitle: eventTitle,
-            displayDate: eventDate,
-            displayLocation: eventLocation,
-            displayStatus:
-              reg.status === "active" ? "Registered" : reg.status || "Unknown",
-          };
+  // Date: prefer started_at if available, else default
+  let displayDate = "March 15"; // your requested default for now
+  if (reg.started_at) {
+    try {
+      const startDate = new Date(reg.started_at);
+      if (!isNaN(startDate.getTime())) {
+        // Format as you like, e.g. "March 15, 2026" or "15 Mar 2026"
+        displayDate = startDate.toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
         });
+      }
+    } catch {}
+  }
+
+  // Capitalize title nicely
+  displayTitle = displayTitle.replace(/\b\w/g, (c) => c.toUpperCase());
+
+  return {
+    ...reg,
+    displayTitle,
+    displayDate,
+    displayLocation,
+    displayStatus: reg.status === "active" ? "Registered" : reg.status || "Unknown",
+  };
+});
 
         setRegistrations(enriched);
       } catch (err) {
