@@ -394,8 +394,8 @@ const SignIn = () => {
               ) : (
                 <form onSubmit={handlePhoneLogin}>
                   <p className="text-center text-gray-600 mb-6">
-                    Enter the 4-digit code sent to<br />
-                    <span className="font-medium">{phone}</span>
+                    Enter the 4-digit code sent to email linked to your phone
+                    {/* <br />                    <span className="font-medium">{phone}</span> */}
                   </p>
 
                   <OtpInput length={4} onChange={setOtp} />
