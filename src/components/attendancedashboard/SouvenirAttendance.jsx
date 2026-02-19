@@ -127,57 +127,63 @@ const SouvenirAttendance = () => {
           </div>
 
           {/* Souvenir Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredSouvenirs.map((souvenir) => (
-              <div
-                key={souvenir.id}
-                className="bg-white pb-4 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
-              >
-                {/* Real Image */}
-                {souvenir.image ? (
-                <img src={souvenir.image} alt={souvenir.name} className="w-full h-48 object-cover mx-auto" />
-                ) : (
-                  <div className="bg-[#333333] h-48 flex items-center justify-center text-white">
-                    No Image
-                  </div>
-                )}
-
-                {/* Card Content */}
-                <div className="mt-6 px-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-semibold text-[#1A1A1A] flex-1">
-                      {souvenir.name}
-                    </h3>
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(
-                        souvenir.status,
-                      )}`}
-                    >
-                      {souvenir.status}
-                    </span>
-                  </div>
-                  <p className="text-sm text-[#333333]/80 mb-1">
-                    {souvenir.type}
-                  </p>
-
-                  {/* Dynamic Claim / Unclaim Button */}
-                  <button
-                    onClick={() => handleClaimToggle(souvenir.id)}
-                    disabled={souvenir.status === "Pending"}
-                    className={`w-full py-2.5 rounded-lg font-medium transition-colors ${getButtonStyles(
-                      souvenir.status,
-                    )}`}
-                  >
-                    {souvenir.status === "Available"
-                      ? "Claim Now"
-                      : souvenir.status === "Claimed"
-                        ? "Unclaim"
-                        : "Pending"}
-                  </button>
-                </div>
-              </div>
-            ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {filteredSouvenirs.map((souvenir) => (
+    <div
+      key={souvenir.id}
+      className="bg-white pb-4 rounded-lg shadow-sm hover:shadow-md transition-shadow"  // Removed overflow-hidden here
+    >
+      {/* Image Wrapper with Hover Effect */}
+      <div className="relative w-full h-58 overflow-hidden">
+        {souvenir.image ? (
+          <img 
+            src={souvenir.image} 
+            alt={souvenir.name} 
+            className="w-full h-full object-cover object-top transition-transform duration-300 ease-in-out hover:scale-110"  
+          />
+        ) : (
+          <div className="bg-[#333333] h-full flex items-center justify-center text-white">
+            No Image
           </div>
+        )}
+      </div>
+
+      {/* Card Content */}
+      <div className="mt-6 px-4">
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="font-semibold text-[#1A1A1A] flex-1">
+            {souvenir.name}
+          </h3>
+          <span
+            className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(
+              souvenir.status,
+            )}`}
+          >
+            {souvenir.status}
+          </span>
+        </div>
+        <p className="text-sm text-[#333333]/80 mb-1">
+          {souvenir.type}
+        </p>
+
+        {/* Dynamic Claim / Unclaim Button */}
+        <button
+          onClick={() => handleClaimToggle(souvenir.id)}
+          disabled={souvenir.status === "Pending"}
+          className={`w-full py-2.5 rounded-lg font-medium transition-colors ${getButtonStyles(
+            souvenir.status,
+          )}`}
+        >
+          {souvenir.status === "Available"
+            ? "Claim Now"
+            : souvenir.status === "Claimed"
+              ? "Unclaim"
+              : "Pending"}
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
         </>
       </div>
     </div>
