@@ -55,10 +55,9 @@ export default function Sidebar({
   const { logout } = useAuth();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const handleLogoutClick = () => {
-    //  console.log("[Sidebar] Logout button clicked — opening modal");
-    setShowLogoutModal(true); // open modal
-  };
+  // const handleLogoutClick = () => {
+  //   setShowLogoutModal(true);
+  // };
 
   const confirmLogout = () => {
     logout(); // clears storage, state, toast, navigates to /signin
@@ -82,7 +81,7 @@ export default function Sidebar({
 
         <aside
           className={`
-            fixed inset-y-0 left-0 z-50 text-white flex flex-col justify-between
+            fixed inset-y-0 bg-[linear-gradient(to_bottom,_#36460A_0%,_#85AB20_100%)] left-0 z-50 text-white flex flex-col justify-between
             transition-all duration-300 ease-in-out h-full overflow-x-auto
             lg:relative lg:z-auto
             ${isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
@@ -183,28 +182,28 @@ export default function Sidebar({
             ))}
 
             {/* Signout Button */}
-<button
-  type="button"
-  onClick={(e) => {
-    e.preventDefault();          // extra safety
-    e.stopPropagation();         // stops any bubbling
-    setShowLogoutModal(true);    // only open modal — no auto-confirm
-  }}
-  className="flex items-center w-full px-6 py-4 hover:bg-[#8BAF2B]/40 transition-all text-left"
->
-  <div className="flex items-center justify-center w-8 h-8">
-    <LogOut size={isCollapsed ? 28 : 22} />
-  </div>
-  <span
-    className={`ml-4 font-medium transition-all ${
-      isCollapsed
-        ? "lg:opacity-0 lg:w-0 lg:overflow-hidden"
-        : "lg:opacity-100"
-    }`}
-  >
-    Signout
-  </span>
-</button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault(); // extra safety
+                e.stopPropagation(); // stops any bubbling
+                setShowLogoutModal(true); // only open modal — no auto-confirm
+              }}
+              className="flex items-center w-full px-6 py-4 hover:bg-[#8BAF2B]/40 transition-all text-left"
+            >
+              <div className="flex items-center justify-center w-8 h-8">
+                <LogOut size={isCollapsed ? 28 : 22} />
+              </div>
+              <span
+                className={`ml-4 font-medium transition-all ${
+                  isCollapsed
+                    ? "lg:opacity-0 lg:w-0 lg:overflow-hidden"
+                    : "lg:opacity-100"
+                }`}
+              >
+                Signout
+              </span>
+            </button>
           </div>
         </aside>
       </div>

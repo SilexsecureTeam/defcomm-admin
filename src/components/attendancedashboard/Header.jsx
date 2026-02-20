@@ -13,7 +13,7 @@ export default function Header({ onMenuClick, pageTitle = "Overview" }) {
       <div className="flex items-center gap-4">
         <button
           onClick={onMenuClick}
-          className="p-2 hover:bg-gray-800 rounded-lg text-white lg:hidden"
+          className="p-2 hover:bg-gray-800 rounded-lg text-[#36460A] lg:hidden"
         >
           <Menu size={28} />
         </button>

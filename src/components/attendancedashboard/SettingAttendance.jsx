@@ -9,8 +9,10 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import avatar from "../../assets/avatar.png";
+import { useAuth } from "../../context/AuthContext";
 
 const SettingAttendance = () => {
+  const { user, loading } = useAuth();
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("********");
@@ -28,7 +30,7 @@ const SettingAttendance = () => {
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Profile Information Section */}
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex justify-between items-start mb-6">
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <h2 className="text-xl font-semibold text-[#1A1A1A]">
                 Profile Information
@@ -42,7 +44,7 @@ const SettingAttendance = () => {
             </button>
           </div>
 
-          <div className="flex gap-6">
+          <div className="flex gap-6 mt-2 ">
             {/* Profile Picture */}
             <div className="">
               <div className="w-20 h-20 rounded-full  flex items-center justify-center overflow-hidden">
@@ -55,13 +57,14 @@ const SettingAttendance = () => {
             </div>
 
             {/* Form Fields */}
-            <div className="flex-1 grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                   Full Name
                 </label>
                 <input
                   type="text"
+                  defaultValue={user?.name || ""}
                   placeholder="Type here"
                   className="w-full px-4 py-2 border border-[#85AB20] text-[#5E6366] rounded-md focus:outline-none focus:ring-2 focus:ring-[#85AB20]/70 focus:border-transparent"
                 />
@@ -73,6 +76,7 @@ const SettingAttendance = () => {
                 </label>
                 <input
                   type="email"
+                  defaultValue={user?.email || ""}
                   placeholder="Type here"
                   className="w-full px-4 py-2 border border-[#85AB20] text-[#5E6366] rounded-md focus:outline-none focus:ring-2 focus:ring-[#85AB20]/70 focus:border-transparent"
                 />
@@ -84,6 +88,7 @@ const SettingAttendance = () => {
                 </label>
                 <input
                   type="tel"
+                  defaultValue={user?.phone || ""}
                   placeholder="Type here"
                   className="w-full px-4 py-2 border border-[#85AB20] text-[#5E6366] rounded-md focus:outline-none focus:ring-2 focus:ring-[#85AB20]/70 focus:border-transparent"
                 />
@@ -95,7 +100,7 @@ const SettingAttendance = () => {
                 </label>
                 <input
                   type="text"
-                  value="Attendee"
+                  value={"Attendee"}
                   readOnly
                   className="w-full px-4 py-2 border-none rounded-md bg-[#333333]/20 text-[#5E6366] cursor-not-allowed"
                 />
@@ -115,7 +120,7 @@ const SettingAttendance = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                 User Name
@@ -168,7 +173,7 @@ const SettingAttendance = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="flex items-end flex-col sm:flex-row sm:items-end gap-4 md:gap-0">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 New Password

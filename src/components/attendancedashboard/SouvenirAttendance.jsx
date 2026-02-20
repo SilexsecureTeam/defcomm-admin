@@ -138,12 +138,12 @@ const SouvenirAttendance = () => {
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 overflow-x-auto">
               {filters.map((filter) => (
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  className={`px-4 py-2 mb-2 sm:mb-0 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
                     activeFilter === filter
                       ? "bg-[#85AB20] text-white"
                       : "bg-[#85AB20]/20 text-[#1A1A1A]"

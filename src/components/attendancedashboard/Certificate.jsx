@@ -68,7 +68,7 @@ const Certificate = () => {
             </div>
 
             {/* Africa Map Decoration - smaller & reposition on mobile */}
-            <div className="absolute right-2 sm:right-4 bottom-10 sm:bottom-60 w-60 sm:w-100 h-60 sm:h-100 opacity-60 hidden sm:block">
+            <div className="absolute right-0 sm:right-4 bottom-20 sm:bottom-60 w-60 sm:w-100 h-60 sm:h-100 opacity-60 block">
               <img src={afrlogo} alt="" className="w-full scale-x-[-1]" />
             </div>
 

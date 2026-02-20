@@ -60,26 +60,26 @@ const AttendanceEvent = () => {
         const data = res.data?.data || [];
         // console.log(data);
 
-       const enriched = data.map((reg) => {
-  // Prefer direct fields from API
-  let displayTitle   = reg.name?.trim() || "Event Registration";
-  let displayLocation = reg.location?.trim() || "TBD";
+        const enriched = data.map((reg) => {
+          // Prefer direct fields from API
+          let displayTitle = reg.name?.trim() || "Event Registration";
+          let displayLocation = reg.location?.trim() || "TBD";
 
-  // Date: prefer started_at if available, else default
- let displayDate = reg.started_at?.split('T')[0] || "March 15";
+          // Date: prefer started_at if available, else default
+          let displayDate = reg.started_at?.split("T")[0] || "March 15";
 
+          // Capitalize title nicely
+          displayTitle = displayTitle.replace(/\b\w/g, (c) => c.toUpperCase());
 
-  // Capitalize title nicely
-  displayTitle = displayTitle.replace(/\b\w/g, (c) => c.toUpperCase());
-
-  return {
-    ...reg,
-    displayTitle,
-    displayDate,
-    displayLocation,
-    displayStatus: reg.status === "active" ? "Registered" : reg.status || "Unknown",
-  };
-});
+          return {
+            ...reg,
+            displayTitle,
+            displayDate,
+            displayLocation,
+            displayStatus:
+              reg.status === "active" ? "Registered" : reg.status || "Unknown",
+          };
+        });
 
         setRegistrations(enriched);
       } catch (err) {
@@ -163,7 +163,7 @@ const AttendanceEvent = () => {
           to={`/attendancedashboard/attendance/${registration.id}`}
           state={{ registration }}
         >
-          <button className="w-full mt-2 bg-[#85AB20]/50 hover:bg-[#85AB20]/70 text-[#36460A] font-medium py-2.5 px-4 rounded-md transition-colors">
+          <button className="w-full py-2 bg-[#85AB20] hover:bg-[#85AB20]/70 text-white text-base font-medium rounded-lg transition-colors">
             View Details
           </button>
         </Link>
@@ -216,10 +216,10 @@ const AttendanceEvent = () => {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
+                  className={`px-4 py-2 mb-2 sm:mb-0 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
                     activeTab === tab
-                      ? "bg-[#85AB20]/20 text-[#1A1A1A]"
-                      : "text-[#1A1A1A]"
+                      ? "bg-[#85AB20] text-white"
+                      : "bg-[#85AB20]/20 text-[#1A1A1A]"
                   }`}
                 >
                   {tab}
