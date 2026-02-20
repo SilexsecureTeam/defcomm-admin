@@ -34,9 +34,9 @@ const Certificate = () => {
           <div className="relative px-12 sm:px-16 md:px-24 py-10 sm:py-12 md:py-16 z-20">
             {/* Header Section */}
             <div className="text-center mb-6 sm:mb-8">
-              <div className="flex justify-center mb-3 sm:mb-4">
+              {/* <div className="flex justify-center mb-3 sm:mb-4">
                 <img src={logo} alt="logo" className="w-16 sm:w-20" />
-              </div>
+              </div> */}
 
               <div className="flex justify-center mb-2">
                 <img src={bountylogo} alt="" className="w-48 sm:w-60" />
