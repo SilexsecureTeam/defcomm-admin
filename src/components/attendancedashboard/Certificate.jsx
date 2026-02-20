@@ -1,8 +1,8 @@
 import React from "react";
-import logo from "../../assets/log.png";
+import logo from "../../assets/afd-logo.png";
 import cer from "../../assets/cer.png";
-import bountylogo from "../../assets/afd-logo.png";
-import afrlogo from "../../assets/afr-logo.png";
+import bountylogo from "../../assets/afr-logo.png";
+import afrlogo from "../../assets/afris.png";
 import sponsor2 from "../../assets/sponsor2.png";
 import sponsor4 from "../../assets/sponsor4.png";
 import sponsor6 from "../../assets/sponsor6.png";
@@ -21,10 +21,10 @@ const Certificate = () => {
         <div className="relative w-full max-w-5xl mx-auto shadow-2xl overflow-hidden rounded-lg">
           {/* Left Green Ribbon - thinner on mobile */}
           <div className="absolute right-0 top-0 w-10 sm:w-20 md:w-24 h-48 sm:h-64 bg-[linear-gradient(to_bottom,#36460A_0%,#85AB20_100%)] clip-ribbon-right z-10">
-        <div
-  className="absolute bottom-0 left-0 w-full h-12 sm:h-16 bg-[#F8F9FB]"
-  style={{ clipPath: "polygon(0 100%, 100% 100%, 50% 0%)" }}
-></div>
+            <div
+              className="absolute bottom-0 left-0 w-full h-12 sm:h-16 bg-[#F8F9FB]"
+              style={{ clipPath: "polygon(0 100%, 100% 100%, 50% 0%)" }}
+            ></div>
           </div>
 
           {/* Right Green Ribbon - adjust gradient if needed */}
@@ -68,13 +68,9 @@ const Certificate = () => {
             </div>
 
             {/* Africa Map Decoration - smaller & reposition on mobile */}
-          <div className="absolute right-2 sm:right-4 bottom-10 sm:bottom-60 w-60 sm:w-100 h-60 sm:h-100 opacity-60 hidden sm:block">
-  <img 
-    src={afrlogo} 
-    alt="" 
-    className="w-full scale-x-[-1]"   
-  />
-</div>
+            <div className="absolute right-2 sm:right-4 bottom-10 sm:bottom-60 w-60 sm:w-100 h-60 sm:h-100 opacity-60 hidden sm:block">
+              <img src={afrlogo} alt="" className="w-full scale-x-[-1]" />
+            </div>
 
             {/* Signatures Section - stack on very small screens if needed */}
             <div className="flex flex-col sm:flex-row justify-between items-center mt-10 sm:mt-16 mb-6 sm:mb-8 relative z-30 mx-auto max-w-xl gap-8 sm:gap-0">
