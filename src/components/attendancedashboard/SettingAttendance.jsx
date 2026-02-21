@@ -12,7 +12,7 @@ import avatar from "../../assets/avatar.png";
 import { useAuth } from "../../context/AuthContext";
 
 const SettingAttendance = () => {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("********");

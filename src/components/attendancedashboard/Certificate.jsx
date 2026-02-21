@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../../assets/afd-logo.png";
+import logo from "../../assets/af-logo.png";
 import cer from "../../assets/cer.png";
 import bountylogo from "../../assets/afr-logo.png";
 import afrlogo from "../../assets/afris.png";
@@ -109,7 +109,7 @@ const Certificate = () => {
                   <img
                     src={logo}
                     alt=""
-                    className="w-8 sm:w-16 h-6 mx-auto sm:mx-0"
+                    className="w-8 sm:w-20 h-8 mx-auto sm:mx-0"
                   />
                   <p className="text-sm sm:text-base text-gray-600 mt-1">
                     Solutions
