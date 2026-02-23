@@ -26,9 +26,7 @@ const Attendance = () => {
   const [clockOutTime, setClockOutTime] = useState(null);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -41,10 +39,10 @@ const Attendance = () => {
     });
   };
 
-  // ── Geolocation ────────────────────────────────────────────────
+  // ── Manual Location Fetch ─────────────────────────────────────
   const fetchUserLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      setLocationError("Geolocation not supported.");
+      setLocationError("Your browser does not support location.");
       return;
     }
 
@@ -59,21 +57,26 @@ const Attendance = () => {
           accuracy: pos.coords.accuracy,
         });
         setLocationLoading(false);
+        toast.success("Location acquired successfully!");
       },
       (err) => {
         let msg = "Failed to get location.";
         if (err.code === 1) msg = "Location permission denied.";
+        if (err.code === 2)
+          msg = "Position unavailable (try on phone with GPS on)";
+        if (err.code === 3)
+          msg = "Location request timed out. Please try again.";
         setLocationError(msg);
         toast.error(msg);
         setLocationLoading(false);
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
+      {
+        enableHighAccuracy: false, // changed for laptop/desktop
+        timeout: 30000, // 30 seconds
+        maximumAge: 0,
+      },
     );
   }, []);
-
-  useEffect(() => {
-    fetchUserLocation();
-  }, [fetchUserLocation]);
 
   const isWithin500m = () => {
     if (!userPosition || !registration?.latitude || !registration?.longitude)
@@ -97,7 +100,8 @@ const Attendance = () => {
     return distance <= 500;
   };
 
-  const canClock = !locationLoading && !locationError && isWithin500m();
+  const canClock =
+    !locationLoading && !locationError && isWithin500m() && userPosition;
 
   const handleClock = async (state) => {
     if (!registration?.id_enc || !token) {
@@ -106,13 +110,12 @@ const Attendance = () => {
     }
 
     if (!userPosition) {
-      toast.warn("Fetching location...");
-      fetchUserLocation();
+      toast.warn("Please click 'Get My Location' first");
       return;
     }
 
     if (!isWithin500m()) {
-      toast.error("You must be within 500m of the event location.");
+      toast.error("You must be within 500m of the event venue.");
       return;
     }
 
@@ -158,6 +161,7 @@ const Attendance = () => {
     handleClock("out");
   };
 
+  // Rest of your original code (stats, chart, summary) stays 100% same
   const stats = [
     { icon: Calendar, label: "Events Attended", value: "0" },
     { icon: Clock, label: "Next Event Starts In", value: "..." },
@@ -210,10 +214,10 @@ const Attendance = () => {
           )}
         </div>
 
-        {/* Clock In / Clock Out - design unchanged, only logic upgraded */}
+        {/* Clock Section - same design */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
           <div className="space-y-4 lg:col-span-1">
-            {/* Clock In - same card design */}
+            {/* Clock In Card */}
             <div className="bg-white rounded-lg shadow p-6 border-l-4 border-[#009345]">
               <h3 className="text-base text-center font-semibold text-[#000000] mb-1">
                 Mark Attendance
@@ -225,22 +229,35 @@ const Attendance = () => {
                 {formatTime(currentTime)}
               </p>
 
-              {/* Small location status inside the card */}
-              {locationLoading && (
-                <p className="text-center text-sm text-gray-500 mb-2">
-                  Getting location...
-                </p>
-              )}
-              {locationError && (
-                <p className="text-center text-sm text-red-600 mb-2">
-                  {locationError}
-                </p>
-              )}
-              {userPosition && !isWithin500m() && (
-                <p className="text-center text-sm text-red-600 mb-2">
-                  Too far from venue (must be within 500m)
-                </p>
-              )}
+              {/* Location Status & Button */}
+              <div className="mb-4">
+                <button
+                  onClick={fetchUserLocation}
+                  disabled={locationLoading}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 rounded transition-colors flex items-center justify-center gap-2"
+                >
+                  {locationLoading ? (
+                    "Getting location..."
+                  ) : (
+                    <>
+                      <MapPin className="w-4 h-4" />
+                      Get My Location
+                    </>
+                  )}
+                </button>
+
+                {locationError && (
+                  <p className="text-center text-red-600 text-sm mt-2">
+                    {locationError}
+                  </p>
+                )}
+                {userPosition && (
+                  <p className="text-center text-green-600 text-sm mt-2">
+                    ✅ Location ready ({userPosition.accuracy.toFixed(0)}m
+                    accuracy)
+                  </p>
+                )}
+              </div>
 
               <button
                 onClick={handleClockIn}
@@ -267,7 +284,7 @@ const Attendance = () => {
               )}
             </div>
 
-            {/* Clock Out - same card design */}
+            {/* Clock Out Card - same style */}
             <div className="bg-white rounded-lg shadow p-6 border-l-4 border-[#E33629]">
               <h3 className="text-base text-center font-semibold text-[#000000] mb-1">
                 Mark Attendance
@@ -279,22 +296,35 @@ const Attendance = () => {
                 {formatTime(currentTime)}
               </p>
 
-              {/* Same location status for consistency */}
-              {locationLoading && (
-                <p className="text-center text-sm text-gray-500 mb-2">
-                  Getting location...
-                </p>
-              )}
-              {locationError && (
-                <p className="text-center text-sm text-red-600 mb-2">
-                  {locationError}
-                </p>
-              )}
-              {userPosition && !isWithin500m() && (
-                <p className="text-center text-sm text-red-600 mb-2">
-                  Too far from venue (must be within 500m)
-                </p>
-              )}
+              {/* Same location section */}
+              <div className="mb-4">
+                <button
+                  onClick={fetchUserLocation}
+                  disabled={locationLoading}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 rounded transition-colors flex items-center justify-center gap-2"
+                >
+                  {locationLoading ? (
+                    "Getting location..."
+                  ) : (
+                    <>
+                      <MapPin className="w-4 h-4" />
+                      Get My Location
+                    </>
+                  )}
+                </button>
+
+                {locationError && (
+                  <p className="text-center text-red-600 text-sm mt-2">
+                    {locationError}
+                  </p>
+                )}
+                {userPosition && (
+                  <p className="text-center text-green-600 text-sm mt-2">
+                    ✅ Location ready ({userPosition.accuracy.toFixed(0)}m
+                    accuracy)
+                  </p>
+                )}
+              </div>
 
               <button
                 onClick={handleClockOut}
@@ -324,8 +354,9 @@ const Attendance = () => {
             </div>
           </div>
 
-          {/* Daily Attendance Statistics (Sample) - 100% unchanged */}
+          {/* Daily Attendance Statistics - 100% unchanged */}
           <div className="lg:col-span-2 bg-white rounded-lg shadow p-6">
+            {/* ... your exact chart code here (unchanged) ... */}
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900">
                 Daily Attendance Statistics (Sample)
@@ -400,6 +431,7 @@ const Attendance = () => {
         {/* Event Summary - unchanged */}
         {registration ? (
           <div className="bg-white rounded-lg shadow p-6 border-l-4 border-[#85AB20]">
+            {/* your original summary code */}
             <h2 className="text-xl font-bold text-[#1A1A1A] mb-4">
               Event Summary
             </h2>
