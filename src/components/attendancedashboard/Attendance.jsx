@@ -26,7 +26,9 @@ const Attendance = () => {
   const [clockOutTime, setClockOutTime] = useState(null);
 
   useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -39,10 +41,11 @@ const Attendance = () => {
     });
   };
 
-  // ── Manual Location Fetch ─────────────────────────────────────
+  // Get user location (manual button)
   const fetchUserLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setLocationError("Your browser does not support location.");
+      toast.error("Geolocation not supported by your browser");
       return;
     }
 
@@ -61,47 +64,27 @@ const Attendance = () => {
       },
       (err) => {
         let msg = "Failed to get location.";
-        if (err.code === 1) msg = "Location permission denied.";
-        if (err.code === 2)
-          msg = "Position unavailable (try on phone with GPS on)";
-        if (err.code === 3)
+        if (err.code === 1) {
+          msg = "Please allow location access in your browser settings.";
+        } else if (err.code === 2) {
+          msg = "Please turn on your device's location services and try again.";
+        } else if (err.code === 3) {
           msg = "Location request timed out. Please try again.";
+        }
         setLocationError(msg);
         toast.error(msg);
         setLocationLoading(false);
       },
       {
-        enableHighAccuracy: false, // changed for laptop/desktop
-        timeout: 30000, // 30 seconds
+        enableHighAccuracy: false,
+        timeout: 30000,
         maximumAge: 0,
       },
     );
   }, []);
 
-  const isWithin500m = () => {
-    if (!userPosition || !registration?.latitude || !registration?.longitude)
-      return false;
-
-    const toRad = (deg) => (deg * Math.PI) / 180;
-    const R = 6371000;
-
-    const dLat = toRad(userPosition.lat - parseFloat(registration.latitude));
-    const dLon = toRad(userPosition.lng - parseFloat(registration.longitude));
-
-    const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(toRad(parseFloat(registration.latitude))) *
-        Math.cos(toRad(userPosition.lat)) *
-        Math.sin(dLon / 2) ** 2;
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c;
-
-    return distance <= 500;
-  };
-
-  const canClock =
-    !locationLoading && !locationError && isWithin500m() && userPosition;
+  // Clock buttons only enabled after location is fetched
+  const canClock = !!userPosition && !locationLoading && !locationError;
 
   const handleClock = async (state) => {
     if (!registration?.id_enc || !token) {
@@ -111,11 +94,6 @@ const Attendance = () => {
 
     if (!userPosition) {
       toast.warn("Please click 'Get My Location' first");
-      return;
-    }
-
-    if (!isWithin500m()) {
-      toast.error("You must be within 500m of the event venue.");
       return;
     }
 
@@ -134,17 +112,23 @@ const Attendance = () => {
           latitude: userPosition.lat.toFixed(6),
           longitude: userPosition.lng.toFixed(6),
         },
-        { headers: { Authorization: `Bearer ${token}` } },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (res.data.status === "200") {
-        toast.success(`Clocked ${state} successfully!`);
+        toast.success(`Clocked ${state === "in" ? "in" : "out"} successfully!`);
         setDone(true);
         setTime(new Date());
       } else {
-        toast.error(res.data.message || "Failed.");
+        toast.error(res.data.message || "Operation failed");
       }
     } catch (err) {
+      console.error("Clock error:", err);
       const msg = err.response?.data?.message || `Failed to clock ${state}`;
       toast.error(msg);
     } finally {
@@ -153,6 +137,7 @@ const Attendance = () => {
   };
 
   const handleClockIn = () => handleClock("in");
+
   const handleClockOut = () => {
     if (!hasClockedIn) {
       toast.warn("You need to clock in first");
@@ -161,7 +146,6 @@ const Attendance = () => {
     handleClock("out");
   };
 
-  // Rest of your original code (stats, chart, summary) stays 100% same
   const stats = [
     { icon: Calendar, label: "Events Attended", value: "0" },
     { icon: Clock, label: "Next Event Starts In", value: "..." },
@@ -178,7 +162,7 @@ const Attendance = () => {
   return (
     <div className="min-h-screen bg-[#F8F9FB] p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Stats Grid - unchanged */}
+        {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat, index) => (
             <div key={index} className="bg-white rounded-lg shadow p-6">
@@ -197,7 +181,7 @@ const Attendance = () => {
           ))}
         </div>
 
-        {/* Attendance Status Badge - unchanged */}
+        {/* Attendance Status Badge */}
         <div className="text-center">
           {hasClockedOut ? (
             <span className="inline-block px-6 py-3 bg-green-100 text-green-800 rounded-full font-medium text-lg shadow-sm">
@@ -214,7 +198,7 @@ const Attendance = () => {
           )}
         </div>
 
-        {/* Clock Section - same design */}
+        {/* Clock In / Clock Out */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
           <div className="space-y-4 lg:col-span-1">
             {/* Clock In Card */}
@@ -229,7 +213,7 @@ const Attendance = () => {
                 {formatTime(currentTime)}
               </p>
 
-              {/* Location Status & Button */}
+              {/* Location Button */}
               <div className="mb-4">
                 <button
                   onClick={fetchUserLocation}
@@ -251,6 +235,7 @@ const Attendance = () => {
                     {locationError}
                   </p>
                 )}
+
                 {userPosition && (
                   <p className="text-center text-green-600 text-sm mt-2">
                     ✅ Location ready ({userPosition.accuracy.toFixed(0)}m
@@ -284,7 +269,7 @@ const Attendance = () => {
               )}
             </div>
 
-            {/* Clock Out Card - same style */}
+            {/* Clock Out Card */}
             <div className="bg-white rounded-lg shadow p-6 border-l-4 border-[#E33629]">
               <h3 className="text-base text-center font-semibold text-[#000000] mb-1">
                 Mark Attendance
@@ -296,7 +281,6 @@ const Attendance = () => {
                 {formatTime(currentTime)}
               </p>
 
-              {/* Same location section */}
               <div className="mb-4">
                 <button
                   onClick={fetchUserLocation}
@@ -318,12 +302,13 @@ const Attendance = () => {
                     {locationError}
                   </p>
                 )}
-                {userPosition && (
+
+                {/* {userPosition && (
                   <p className="text-center text-green-600 text-sm mt-2">
                     ✅ Location ready ({userPosition.accuracy.toFixed(0)}m
                     accuracy)
                   </p>
-                )}
+                )} */}
               </div>
 
               <button
@@ -354,9 +339,8 @@ const Attendance = () => {
             </div>
           </div>
 
-          {/* Daily Attendance Statistics - 100% unchanged */}
+          {/* Daily Attendance Statistics (Sample) - unchanged */}
           <div className="lg:col-span-2 bg-white rounded-lg shadow p-6">
-            {/* ... your exact chart code here (unchanged) ... */}
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900">
                 Daily Attendance Statistics (Sample)
@@ -428,10 +412,9 @@ const Attendance = () => {
           </div>
         </div>
 
-        {/* Event Summary - unchanged */}
+        {/* Event Summary */}
         {registration ? (
           <div className="bg-white rounded-lg shadow p-6 border-l-4 border-[#85AB20]">
-            {/* your original summary code */}
             <h2 className="text-xl font-bold text-[#1A1A1A] mb-4">
               Event Summary
             </h2>

@@ -43,7 +43,7 @@ const Certificate = () => {
               </div>
 
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-wide mb-6 sm:mb-8">
-                CERTIFICATE OF APPRECIATION
+                CERTIFICATE OF PARTICIPATION
               </h1>
             </div>
 
@@ -59,11 +59,11 @@ const Certificate = () => {
 
               <div className="w-full max-w-xl sm:max-w-2xl mx-auto h-0.5 bg-gray-300 mb-6 sm:mb-8"></div>
 
-              <p className="text-xs sm:text-sm text-gray-700 leading-relaxed max-w-xl sm:max-w-2xl mx-auto px-2 sm:px-0">
-                Volunteered for the{" "}
-                <span className="font-bold">BUG BOUNTY PROGRAMME</span> and
-                demonstrated outstanding dedication and commitment, contributing
-                to the success of the event.
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed max-w-xl sm:max-w-2xl mx-auto px-2 sm:px-0">
+                Participated in the{" "}
+                <span className="font-bold">
+                  Africa Defense Technology Conference
+                </span>
               </p>
             </div>
 
