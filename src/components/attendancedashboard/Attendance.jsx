@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Calendar, Clock, Award, Gift } from "lucide-react";
+import React, { useState, useEffect, useCallback } from "react";
+import { Calendar, Clock, Award, Gift, MapPin } from "lucide-react";
 import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useAuth } from "../../context/AuthContext"; // adjust path if needed
+import { useAuth } from "../../context/AuthContext";
+
+const BASE_URL = "https://backend.defcomm.ng/api";
 
 const Attendance = () => {
   const { registrationId } = useParams();
@@ -12,12 +14,15 @@ const Attendance = () => {
   const { token } = useAuth();
 
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [userPosition, setUserPosition] = useState(null);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState(null);
+
   const [clockInLoading, setClockInLoading] = useState(false);
   const [clockOutLoading, setClockOutLoading] = useState(false);
   const [hasClockedIn, setHasClockedIn] = useState(false);
-  const [clockInTime, setClockInTime] = useState(null); // to show actual time
-  // Add this line with the other useState calls
   const [hasClockedOut, setHasClockedOut] = useState(false);
+  const [clockInTime, setClockInTime] = useState(null);
   const [clockOutTime, setClockOutTime] = useState(null);
 
   useEffect(() => {
@@ -36,74 +41,121 @@ const Attendance = () => {
     });
   };
 
-  const handleClockIn = async () => {
+  // ── Geolocation ────────────────────────────────────────────────
+  const fetchUserLocation = useCallback(() => {
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation not supported.");
+      return;
+    }
+
+    setLocationLoading(true);
+    setLocationError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserPosition({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy,
+        });
+        setLocationLoading(false);
+      },
+      (err) => {
+        let msg = "Failed to get location.";
+        if (err.code === 1) msg = "Location permission denied.";
+        setLocationError(msg);
+        toast.error(msg);
+        setLocationLoading(false);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
+    );
+  }, []);
+
+  useEffect(() => {
+    fetchUserLocation();
+  }, [fetchUserLocation]);
+
+  const isWithin500m = () => {
+    if (!userPosition || !registration?.latitude || !registration?.longitude)
+      return false;
+
+    const toRad = (deg) => (deg * Math.PI) / 180;
+    const R = 6371000;
+
+    const dLat = toRad(userPosition.lat - parseFloat(registration.latitude));
+    const dLon = toRad(userPosition.lng - parseFloat(registration.longitude));
+
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(parseFloat(registration.latitude))) *
+        Math.cos(toRad(userPosition.lat)) *
+        Math.sin(dLon / 2) ** 2;
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+
+    return distance <= 500;
+  };
+
+  const canClock = !locationLoading && !locationError && isWithin500m();
+
+  const handleClock = async (state) => {
     if (!registration?.id_enc || !token) {
       toast.error("Missing event or authentication");
       return;
     }
 
-    setClockInLoading(true);
-    try {
-      const url = `https://backend.defcomm.ng/api/user/event/clock/${registration.id_enc}/in`;
+    if (!userPosition) {
+      toast.warn("Fetching location...");
+      fetchUserLocation();
+      return;
+    }
 
-      const res = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+    if (!isWithin500m()) {
+      toast.error("You must be within 500m of the event location.");
+      return;
+    }
+
+    const setLoading = state === "in" ? setClockInLoading : setClockOutLoading;
+    const setDone = state === "in" ? setHasClockedIn : setHasClockedOut;
+    const setTime = state === "in" ? setClockInTime : setClockOutTime;
+
+    setLoading(true);
+
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/user/event/clock`,
+        {
+          id: registration.id_enc,
+          state,
+          latitude: userPosition.lat.toFixed(6),
+          longitude: userPosition.lng.toFixed(6),
         },
-      });
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
 
       if (res.data.status === "200") {
-        toast.success("Clocked in successfully!");
-        setHasClockedIn(true);
-
-        setClockInTime(new Date()); // use current time (or use res.data.data.clockin if formatted)
+        toast.success(`Clocked ${state} successfully!`);
+        setDone(true);
+        setTime(new Date());
       } else {
-        toast.error(res.data.message || "Clock in failed");
+        toast.error(res.data.message || "Failed.");
       }
     } catch (err) {
-      console.error("Clock in error:", err);
-      const msg = err.response?.data?.message || "Failed to clock in";
+      const msg = err.response?.data?.message || `Failed to clock ${state}`;
       toast.error(msg);
     } finally {
-      setClockInLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleClockOut = async () => {
-    if (!registration?.id_enc || !token) {
-      toast.error("Missing event or authentication");
-      return;
-    }
-
+  const handleClockIn = () => handleClock("in");
+  const handleClockOut = () => {
     if (!hasClockedIn) {
       toast.warn("You need to clock in first");
       return;
     }
-
-    setClockOutLoading(true);
-    try {
-      const url = `https://backend.defcomm.ng/api/user/event/clock/${registration.id_enc}/out`;
-
-      const res = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (res.data.status === "200") {
-        toast.success("Clocked out successfully!");
-        setHasClockedOut(true);
-        setClockOutTime(new Date()); // ← add this line
-      } else {
-        toast.error(res.data.message || "Clock out failed");
-      }
-    } catch (err) {
-      console.error("Clock out error:", err);
-      const msg = err.response?.data?.message || "Failed to clock out";
-      toast.error(msg);
-    } finally {
-      setClockOutLoading(false);
-    }
+    handleClock("out");
   };
 
   const stats = [
@@ -122,7 +174,7 @@ const Attendance = () => {
   return (
     <div className="min-h-screen bg-[#F8F9FB] p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Stats Grid */}
+        {/* Stats Grid - unchanged */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat, index) => (
             <div key={index} className="bg-white rounded-lg shadow p-6">
@@ -141,7 +193,7 @@ const Attendance = () => {
           ))}
         </div>
 
-        {/* Attendance Status Badge */}
+        {/* Attendance Status Badge - unchanged */}
         <div className="text-center">
           {hasClockedOut ? (
             <span className="inline-block px-6 py-3 bg-green-100 text-green-800 rounded-full font-medium text-lg shadow-sm">
@@ -158,10 +210,10 @@ const Attendance = () => {
           )}
         </div>
 
-        {/* Clock In / Clock Out */}
+        {/* Clock In / Clock Out - design unchanged, only logic upgraded */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
           <div className="space-y-4 lg:col-span-1">
-            {/* Clock In */}
+            {/* Clock In - same card design */}
             <div className="bg-white rounded-lg shadow p-6 border-l-4 border-[#009345]">
               <h3 className="text-base text-center font-semibold text-[#000000] mb-1">
                 Mark Attendance
@@ -172,13 +224,31 @@ const Attendance = () => {
               <p className="text-2xl text-center font-bold text-gray-900 mb-4">
                 {formatTime(currentTime)}
               </p>
+
+              {/* Small location status inside the card */}
+              {locationLoading && (
+                <p className="text-center text-sm text-gray-500 mb-2">
+                  Getting location...
+                </p>
+              )}
+              {locationError && (
+                <p className="text-center text-sm text-red-600 mb-2">
+                  {locationError}
+                </p>
+              )}
+              {userPosition && !isWithin500m() && (
+                <p className="text-center text-sm text-red-600 mb-2">
+                  Too far from venue (must be within 500m)
+                </p>
+              )}
+
               <button
                 onClick={handleClockIn}
-                disabled={clockInLoading || hasClockedIn}
+                disabled={clockInLoading || hasClockedIn || !canClock}
                 className={`w-full text-white font-semibold py-2.5 px-4 rounded transition-colors ${
                   clockInLoading
                     ? "bg-gray-400 cursor-not-allowed"
-                    : hasClockedIn
+                    : hasClockedIn || !canClock
                       ? "bg-green-700 cursor-not-allowed"
                       : "bg-[#009345] hover:bg-[#009345]/80"
                 }`}
@@ -197,7 +267,7 @@ const Attendance = () => {
               )}
             </div>
 
-            {/* Clock Out */}
+            {/* Clock Out - same card design */}
             <div className="bg-white rounded-lg shadow p-6 border-l-4 border-[#E33629]">
               <h3 className="text-base text-center font-semibold text-[#000000] mb-1">
                 Mark Attendance
@@ -208,13 +278,33 @@ const Attendance = () => {
               <p className="text-2xl font-bold text-center text-gray-900 mb-4">
                 {formatTime(currentTime)}
               </p>
+
+              {/* Same location status for consistency */}
+              {locationLoading && (
+                <p className="text-center text-sm text-gray-500 mb-2">
+                  Getting location...
+                </p>
+              )}
+              {locationError && (
+                <p className="text-center text-sm text-red-600 mb-2">
+                  {locationError}
+                </p>
+              )}
+              {userPosition && !isWithin500m() && (
+                <p className="text-center text-sm text-red-600 mb-2">
+                  Too far from venue (must be within 500m)
+                </p>
+              )}
+
               <button
                 onClick={handleClockOut}
-                disabled={clockOutLoading || hasClockedOut || !hasClockedIn}
+                disabled={
+                  clockOutLoading || hasClockedOut || !hasClockedIn || !canClock
+                }
                 className={`w-full text-white font-semibold py-2.5 px-4 rounded transition-colors ${
                   clockOutLoading
                     ? "bg-gray-400 cursor-not-allowed"
-                    : hasClockedOut
+                    : hasClockedOut || !hasClockedIn || !canClock
                       ? "bg-red-800 cursor-not-allowed"
                       : "bg-[#E33629] hover:bg-red-600"
                 }`}
@@ -234,7 +324,7 @@ const Attendance = () => {
             </div>
           </div>
 
-          {/* Daily Attendance Statistics (Sample) */}
+          {/* Daily Attendance Statistics (Sample) - 100% unchanged */}
           <div className="lg:col-span-2 bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900">
@@ -307,7 +397,7 @@ const Attendance = () => {
           </div>
         </div>
 
-        {/* Event Summary - Moved to top */}
+        {/* Event Summary - unchanged */}
         {registration ? (
           <div className="bg-white rounded-lg shadow p-6 border-l-4 border-[#85AB20]">
             <h2 className="text-xl font-bold text-[#1A1A1A] mb-4">

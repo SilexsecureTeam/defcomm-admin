@@ -91,7 +91,7 @@ const Certificate = () => {
               <div className="text-center">
                 <div className="w-40 sm:w-48 h-0.5 bg-gray-800 mb-2"></div>
                 <p className="text-sm font-bold text-gray-900">
-                  Nike Ndikak Nelson
+                  Nike Nsikak Nelson
                 </p>
                 <p className="text-xs text-gray-600">Co-Founder</p>
                 <p className="text-xs text-gray-600">Defcomm solutions.</p>
