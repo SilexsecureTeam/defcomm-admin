@@ -25,6 +25,39 @@ const Attendance = () => {
   const [clockInTime, setClockInTime] = useState(null);
   const [clockOutTime, setClockOutTime] = useState(null);
 
+  // ==================== PERSISTENCE WITH LOCALSTORAGE ====================
+  const storageKey = `attendance_${registrationId}`;
+
+  // Load saved attendance on mount
+  useEffect(() => {
+    if (!registrationId) return;
+
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      const data = JSON.parse(saved);
+      if (data.clockIn) {
+        setHasClockedIn(true);
+        setClockInTime(new Date(data.clockIn));
+      }
+      if (data.clockOut) {
+        setHasClockedOut(true);
+        setClockOutTime(new Date(data.clockOut));
+      }
+    }
+  }, [registrationId, storageKey]);
+
+  // Save to localStorage whenever state changes
+  useEffect(() => {
+    if (!registrationId) return;
+
+    const data = {
+      clockIn: clockInTime ? clockInTime.toISOString() : null,
+      clockOut: clockOutTime ? clockOutTime.toISOString() : null,
+    };
+    localStorage.setItem(storageKey, JSON.stringify(data));
+  }, [clockInTime, clockOutTime, registrationId, storageKey]);
+  // =====================================================================
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -41,7 +74,6 @@ const Attendance = () => {
     });
   };
 
-  // Get user location (manual button)
   const fetchUserLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setLocationError("Your browser does not support location.");
@@ -64,13 +96,12 @@ const Attendance = () => {
       },
       (err) => {
         let msg = "Failed to get location.";
-        if (err.code === 1) {
+        if (err.code === 1)
           msg = "Please allow location access in your browser settings.";
-        } else if (err.code === 2) {
+        else if (err.code === 2)
           msg = "Please turn on your device's location services and try again.";
-        } else if (err.code === 3) {
+        else if (err.code === 3)
           msg = "Location request timed out. Please try again.";
-        }
         setLocationError(msg);
         toast.error(msg);
         setLocationLoading(false);
@@ -83,7 +114,6 @@ const Attendance = () => {
     );
   }, []);
 
-  // Clock buttons only enabled after location is fetched
   const canClock = !!userPosition && !locationLoading && !locationError;
 
   const handleClock = async (state) => {
@@ -153,12 +183,6 @@ const Attendance = () => {
     { icon: Gift, label: "Souvenirs Claimed", value: "0" },
   ];
 
-  const presentCount = 90;
-  const absentCount = 20;
-  const total = presentCount + absentCount;
-  const presentPercentage = (presentCount / total) * 100;
-  const absentPercentage = (absentCount / total) * 100;
-
   return (
     <div className="min-h-screen bg-[#F8F9FB] p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -213,7 +237,6 @@ const Attendance = () => {
                 {formatTime(currentTime)}
               </p>
 
-              {/* Location Button */}
               <div className="mb-4">
                 <button
                   onClick={fetchUserLocation}
@@ -261,12 +284,6 @@ const Attendance = () => {
                     ? "Clocked In"
                     : "CLOCK IN"}
               </button>
-
-              {hasClockedIn && clockInTime && (
-                <p className="text-center text-sm text-green-700 mt-3">
-                  Clocked in at {formatTime(clockInTime)}
-                </p>
-              )}
             </div>
 
             {/* Clock Out Card */}
@@ -303,12 +320,12 @@ const Attendance = () => {
                   </p>
                 )}
 
-                {/* {userPosition && (
+                {userPosition && (
                   <p className="text-center text-green-600 text-sm mt-2">
                     ✅ Location ready ({userPosition.accuracy.toFixed(0)}m
                     accuracy)
                   </p>
-                )} */}
+                )}
               </div>
 
               <button
@@ -330,20 +347,14 @@ const Attendance = () => {
                     ? "Clocked Out"
                     : "CLOCK OUT"}
               </button>
-
-              {hasClockedOut && clockOutTime && (
-                <p className="text-center text-sm text-red-700 mt-3">
-                  Clocked out at {formatTime(clockOutTime)}
-                </p>
-              )}
             </div>
           </div>
 
-          {/* Daily Attendance Statistics (Sample) - unchanged */}
+          {/* STACKED CHART - Green stays, Red on top */}
           <div className="lg:col-span-2 bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900">
-                Daily Attendance Statistics (Sample)
+                My Attendance Today
               </h2>
             </div>
 
@@ -352,61 +363,46 @@ const Attendance = () => {
               <div className="flex items-center space-x-4 text-sm">
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-[#85AB20] rounded"></div>
-                  <span className="text-[#000000]">Present</span>
+                  <span className="text-[#000000]">Clock In</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-[#CB4D42] rounded"></div>
-                  <span className="text-[#000000]">Absent</span>
+                  <span className="text-[#000000]">Clock Out</span>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex">
+            <div className="flex justify-center">
+              <div className="relative w-48" style={{ height: "280px" }}>
+                {/* Green bar - stays once clocked in */}
                 <div
-                  className="flex flex-col justify-between text-xs text-[#8A8A8A] pr-4 py-2"
-                  style={{ height: "300px" }}
+                  className="absolute bottom-0 left-0 right-0 bg-[#85AB20] rounded-t-sm flex flex-col items-center justify-end pb-3 transition-all"
+                  style={{ height: hasClockedIn ? "60%" : "25%" }}
                 >
-                  <span>100%</span>
-                  <span>90%</span>
-                  <span>80%</span>
-                  <span>60%</span>
-                  <span>50%</span>
-                  <span>40%</span>
+                  {hasClockedIn && clockInTime ? (
+                    <div className="text-white text-center text-sm font-semibold">
+                      Clocked In
+                      <br />
+                      {formatTime(clockInTime)}
+                    </div>
+                  ) : (
+                    <div className="text-white/70 text-xs">Clock In</div>
+                  )}
                 </div>
 
-                <div className="flex-1 relative" style={{ height: "300px" }}>
-                  <div className="absolute inset-0 flex flex-col justify-between">
-                    {[...Array(6)].map((_, i) => (
-                      <div key={i} className="border-t border-gray-100"></div>
-                    ))}
-                  </div>
-
-                  <div className="absolute bottom-0 left-0 right-0 flex justify-center">
-                    <div className="relative w-24" style={{ height: "270px" }}>
-                      <div
-                        className="absolute bottom-0 left-0 right-0 bg-[#85AB20] rounded-t-sm flex items-end justify-center pb-2"
-                        style={{ height: `${presentPercentage}%` }}
-                      >
-                        <span className="text-white font-semibold text-sm">
-                          {presentCount}
-                        </span>
-                      </div>
-
-                      <div
-                        className="absolute left-0 right-0 bg-[#CB4D42] rounded-t-sm flex items-end justify-center pb-2"
-                        style={{
-                          bottom: `${presentPercentage}%`,
-                          height: `${absentPercentage}%`,
-                        }}
-                      >
-                        <span className="text-white font-semibold text-sm">
-                          {absentCount}
-                        </span>
-                      </div>
+                {/* Red bar - appears on top when clocked out */}
+                {hasClockedOut && clockOutTime && (
+                  <div
+                    className="absolute left-0 right-0 bg-[#CB4D42] rounded-t-sm flex flex-col items-center justify-end pb-3 transition-all"
+                    style={{ bottom: "60%", height: "40%" }}
+                  >
+                    <div className="text-white text-center text-sm font-semibold">
+                      Clocked Out
+                      <br />
+                      {formatTime(clockOutTime)}
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
