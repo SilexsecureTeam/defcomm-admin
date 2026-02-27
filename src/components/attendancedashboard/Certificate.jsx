@@ -112,6 +112,7 @@ const Certificate = () => {
   return (
     <div className="min-h-screen bg-[#F8F9FB] p-4 sm:p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
+        {/* Event Selector */}
         <div className="mb-8 flex justify-center">
           <div className="relative w-full max-w-xs">
             <button
@@ -123,7 +124,7 @@ const Certificate = () => {
             </button>
 
             {isDropdownOpen && (
-              <div className="absolute z-90 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg max-h-60 overflow-auto">
+              <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg max-h-60 overflow-auto">
                 {registrations.map((reg) => (
                   <button
                     key={reg.event_id}
@@ -140,119 +141,117 @@ const Certificate = () => {
             )}
           </div>
         </div>
-        {/* Certificate Container */}
-        <div className="relative w-full max-w-5xl mx-auto shadow-2xl overflow-hidden rounded-lg">
-          {/* Left Green Ribbon - thinner on mobile */}
-          <div className="absolute right-0 top-0 w-10 sm:w-20 md:w-24 h-48 sm:h-64 bg-[linear-gradient(to_bottom,#36460A_0%,#85AB20_100%)] clip-ribbon-right z-10">
-            <div
-              className="absolute bottom-0 left-0 w-full h-12 sm:h-16 bg-[#F8F9FB]"
-              style={{ clipPath: "polygon(0 100%, 100% 100%, 50% 0%)" }}
-            ></div>
-          </div>
 
-          {/* Right Green Ribbon - adjust gradient if needed */}
-          <div className="absolute left-0 top-0 w-10 sm:w-20 md:w-24 h-full bg-[linear-gradient(to_bottom,#36460A_0%,#85AB20_100%)]"></div>
-
-          {/* Main Content Area - more padding on larger, less on mobile */}
-          <div className="relative px-12 sm:px-16 md:px-24 py-10 sm:py-12 md:py-16 z-20">
-            {/* Header Section */}
-            <div className="text-center mb-6 sm:mb-8">
-              {/* <div className="flex justify-center mb-3 sm:mb-4">
-                <img src={logo} alt="logo" className="w-16 sm:w-20" />
-              </div> */}
-
-              <div className="flex justify-center mb-2">
-                <img src={bountylogo} alt="" className="w-48 sm:w-60" />
-              </div>
-
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-wide mb-6 sm:mb-8">
-                CERTIFICATE OF PARTICIPATION
-              </h1>
+        {/* Conditional rendering of certificate or no-certificate message */}
+        {currentCertificate ? (
+          <div className="relative w-full max-w-5xl mx-auto shadow-2xl overflow-hidden rounded-lg">
+            {/* Left Green Ribbon */}
+            <div className="absolute right-0 top-0 w-10 sm:w-20 md:w-24 h-48 sm:h-64 bg-[linear-gradient(to_bottom,#36460A_0%,#85AB20_100%)] clip-ribbon-right z-10">
+              <div
+                className="absolute bottom-0 left-0 w-full h-12 sm:h-16 bg-[#F8F9FB]"
+                style={{ clipPath: "polygon(0 100%, 100% 100%, 50% 0%)" }}
+              ></div>
             </div>
 
-            {/* Body Text */}
-            <div className="text-center mb-6 sm:mb-8">
-              <p className="text-sm sm:text-base text-gray-700 italic mb-4 sm:mb-6">
-                This is to certify that
-              </p>
+            {/* Right Green Ribbon */}
+            <div className="absolute left-0 top-0 w-10 sm:w-20 md:w-24 h-full bg-[linear-gradient(to_bottom,#36460A_0%,#85AB20_100%)]"></div>
 
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 mb-2 tracking-tight">
-                {displayName.split(" ")[0]}
-              </h2>
-
-              <div className="w-full max-w-xl sm:max-w-2xl mx-auto h-0.5 bg-gray-300 mb-6 sm:mb-8"></div>
-
-              <p className="text-sm sm:text-base text-gray-700 leading-relaxed max-w-xl sm:max-w-2xl mx-auto px-2 sm:px-0">
-                Participated in the{" "}
-                <span className="font-bold">{selectedEventName}</span>
-              </p>
-            </div>
-
-            {/* Africa Map Decoration - smaller & reposition on mobile */}
-            <div className="absolute right-0 sm:right-4 bottom-20 sm:bottom-60 w-60 sm:w-100 h-60 sm:h-100 opacity-60 block">
-              <img src={afrlogo} alt="" className="w-full scale-x-[-1]" />
-            </div>
-
-            {/* Signatures Section - stack on very small screens if needed */}
-            <div className="flex flex-col sm:flex-row justify-between items-center mt-10 sm:mt-16 mb-6 sm:mb-8 relative z-30 mx-auto max-w-xl gap-8 sm:gap-0">
-              {/* Left Signature */}
-              <div className="text-center">
-                <div className="w-40 sm:w-48 h-0.5 bg-gray-800 mb-2"></div>
-                <p className="text-sm font-bold text-gray-900">
-                  Salami Sophiat
-                </p>
-                <p className="text-xs text-gray-600">Project Manager</p>
-                <p className="text-xs text-gray-600">Defcomm solutions.</p>
-              </div>
-
-              {/* Center Seal */}
-              <img src={cer} alt="" className="w-10 sm:w-16" />
-
-              {/* Right Signature */}
-              <div className="text-center">
-                <div className="w-40 sm:w-48 h-0.5 bg-gray-800 mb-2"></div>
-                <p className="text-sm font-bold text-gray-900">
-                  Nike Nsikak Nelson
-                </p>
-                <p className="text-xs text-gray-600">Co-Founder</p>
-                <p className="text-xs text-gray-600">Defcomm solutions.</p>
-              </div>
-            </div>
-
-            {/* Footer Section */}
-            <div className="mt-12 sm:mt-20 pt-6 sm:pt-8 border-t border-gray-200 md:ml-30">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-0">
-                {/* Left - Initiative */}
-                <div className="text-center sm:text-left">
-                  <p className="text-sm sm:text-base text-gray-600 mb-2">
-                    An Initiative of
-                  </p>
-                  <img
-                    src={logo}
-                    alt=""
-                    className="w-8 sm:w-20 h-8 mx-auto sm:mx-0"
-                  />
-                  <p className="text-sm sm:text-base text-gray-600 mt-1">
-                    Solutions
-                  </p>
+            {/* Main Content Area */}
+            <div className="relative px-12 sm:px-16 md:px-24 py-10 sm:py-12 md:py-16 z-20">
+              {/* Header Section */}
+              <div className="text-center mb-6 sm:mb-8">
+                <div className="flex justify-center mb-2">
+                  <img src={bountylogo} alt="" className="w-48 sm:w-60" />
                 </div>
 
-                {/* Right - Partnership */}
-                <div className="text-center sm:text-left">
-                  <p className="text-sm sm:text-base text-gray-600 mb-2">
-                    In Partnership with
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-wide mb-6 sm:mb-8">
+                  CERTIFICATE OF PARTICIPATION
+                </h1>
+              </div>
+
+              {/* Body Text */}
+              <div className="text-center mb-6 sm:mb-8">
+                <p className="text-sm sm:text-base text-gray-700 italic mb-4 sm:mb-6">
+                  This is to certify that
+                </p>
+
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 mb-2 tracking-tight">
+                  {displayName.split(" ")[0]}
+                </h2>
+
+                <div className="w-full max-w-xl sm:max-w-2xl mx-auto h-0.5 bg-gray-300 mb-6 sm:mb-8"></div>
+
+                <p className="text-sm sm:text-base text-gray-700 leading-relaxed max-w-xl sm:max-w-2xl mx-auto px-2 sm:px-0">
+                  Participated in the{" "}
+                  <span className="font-bold">{selectedEventName}</span>
+                </p>
+              </div>
+
+              {/* Africa Map Decoration */}
+              <div className="absolute right-0 sm:right-4 bottom-20 sm:bottom-60 w-60 sm:w-100 h-60 sm:h-100 opacity-60 block">
+                <img src={afrlogo} alt="" className="w-full scale-x-[-1]" />
+              </div>
+
+              {/* Signatures Section */}
+              <div className="flex flex-col sm:flex-row justify-between items-center mt-10 sm:mt-16 mb-6 sm:mb-8 relative z-30 mx-auto max-w-xl gap-8 sm:gap-0">
+                <div className="text-center">
+                  <div className="w-40 sm:w-48 h-0.5 bg-gray-800 mb-2"></div>
+                  <p className="text-sm font-bold text-gray-900">
+                    Salami Sophiat
                   </p>
-                  <div className="flex gap-3 sm:gap-4 items-center justify-center sm:justify-end">
-                    <img src={sponsor2} alt="" className="w-10 sm:w-12" />
-                    <img src={sponsor4} alt="" className="w-10 sm:w-12" />
-                    <img src={sponsor6} alt="" className="w-10 sm:w-12" />
-                    <img src={sponsor11} alt="" className="w-10 sm:w-12" />
+                  <p className="text-xs text-gray-600">Project Manager</p>
+                  <p className="text-xs text-gray-600">Defcomm solutions.</p>
+                </div>
+
+                <img src={cer} alt="" className="w-10 sm:w-16" />
+
+                <div className="text-center">
+                  <div className="w-40 sm:w-48 h-0.5 bg-gray-800 mb-2"></div>
+                  <p className="text-sm font-bold text-gray-900">
+                    Nike Nsikak Nelson
+                  </p>
+                  <p className="text-xs text-gray-600">Co-Founder</p>
+                  <p className="text-xs text-gray-600">Defcomm solutions.</p>
+                </div>
+              </div>
+
+              {/* Footer Section */}
+              <div className="mt-12 sm:mt-20 pt-6 sm:pt-8 border-t border-gray-200 md:ml-30">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-0">
+                  <div className="text-center sm:text-left">
+                    <p className="text-sm sm:text-base text-gray-600 mb-2">
+                      An Initiative of
+                    </p>
+                    <img
+                      src={logo}
+                      alt=""
+                      className="w-8 sm:w-20 h-8 mx-auto sm:mx-0"
+                    />
+                    <p className="text-sm sm:text-base text-gray-600 mt-1">
+                      Solutions
+                    </p>
+                  </div>
+
+                  <div className="text-center sm:text-left">
+                    <p className="text-sm sm:text-base text-gray-600 mb-2">
+                      In Partnership with
+                    </p>
+                    <div className="flex gap-3 sm:gap-4 items-center justify-center sm:justify-end">
+                      <img src={sponsor2} alt="" className="w-10 sm:w-12" />
+                      <img src={sponsor4} alt="" className="w-10 sm:w-12" />
+                      <img src={sponsor6} alt="" className="w-10 sm:w-12" />
+                      <img src={sponsor11} alt="" className="w-10 sm:w-12" />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="text-center py-20 text-gray-600 text-xl font-medium">
+            No certificate available yet for this event.
+          </div>
+        )}
 
         {/* Download Button - Disabled for now */}
         <div className="mt-8 text-center hidden">
@@ -267,6 +266,7 @@ const Certificate = () => {
             (Not available yet – feature coming soon!)
           </p>
         </div>
+
         {currentCertificate && (
           <div className="text-center mt-6 mb-8">
             <p className="inline-block px-8 py-2 bg-[#85AB20]/10 text-[#36460A] font-medium rounded-full text-sm">

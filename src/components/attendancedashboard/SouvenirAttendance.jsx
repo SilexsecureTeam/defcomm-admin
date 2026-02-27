@@ -121,43 +121,6 @@ const SouvenirAttendance = () => {
     }
   };
 
-  const getButtonStyles = (status) => {
-    switch (status) {
-      case "Available":
-        return "bg-[#36460A] hover:bg-[#2a3808] text-white";
-      case "Claimed":
-        return "bg-red-600 hover:bg-red-700 text-white";
-      case "Pending":
-      default:
-        return "bg-gray-400 text-gray-700 cursor-not-allowed";
-    }
-  };
-
-  // Local toggle only (no API call)
-  const handleClaimToggle = (id, currentStatus) => {
-    if (currentStatus === "Pending") return;
-
-    setRegistrations((prev) =>
-      prev.map((reg) => {
-        if (reg.event_id !== selectedEvent) return reg;
-
-        return {
-          ...reg,
-          souvenir: reg.souvenir.map((s) =>
-            s.id === id
-              ? {
-                  ...s,
-                  is_collected: currentStatus === "Available" ? 1 : 0,
-                }
-              : s,
-          ),
-        };
-      }),
-    );
-
-    toast.success(currentStatus === "Available" ? "Claimed!" : "Unclaimed!");
-  };
-
   const SkeletonSouvenirCard = () => (
     <div className="bg-white rounded-lg shadow-sm animate-pulse">
       <div className="h-48 bg-gray-200 rounded-t-lg"></div>
@@ -338,21 +301,13 @@ const SouvenirAttendance = () => {
                         {souvenir.type}
                       </p>
 
-                      <button
-                        onClick={() =>
-                          handleClaimToggle(souvenir.id, souvenir.status)
-                        }
-                        disabled={souvenir.status === "Pending"}
-                        className={`w-full py-2.5 rounded-lg font-medium transition-colors ${getButtonStyles(
-                          souvenir.status,
-                        )}`}
+                      <div
+                        className={`w-full py-3 text-center rounded-lg font-medium bg-[#85AB20] text-white`}
                       >
-                        {souvenir.status === "Available"
-                          ? "Claim Now"
-                          : souvenir.status === "Claimed"
-                            ? "Unclaim"
-                            : "Pending"}
-                      </button>
+                        {souvenir.status === "Claimed"
+                          ? souvenir.status
+                          : "✓ Claimed"}
+                      </div>
                     </div>
                   </div>
                 ))}
