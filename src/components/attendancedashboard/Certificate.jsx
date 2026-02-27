@@ -1,4 +1,7 @@
-import React from "react";
+import { useState, useEffect, useMemo } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { ChevronDown } from "lucide-react";
 import logo from "../../assets/af-logo.png";
 import cer from "../../assets/cer.png";
 import bountylogo from "../../assets/afr-logo.png";
@@ -10,13 +13,133 @@ import sponsor11 from "../../assets/sponsor11.png";
 import { useAuth } from "../../context/AuthContext";
 
 const Certificate = () => {
-  const { user } = useAuth();
+  const { token, loading: authLoading, user } = useAuth();
+  const displayName = user?.name || "Your Name";
 
-  const displayName = user?.name || "Your Name"; // fallback if no name
+  // ==================== NEW STATES ====================
+  const [registrations, setRegistrations] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // ===================================================
+
+  // ==================== FETCH CERTIFICATES ====================
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!token || authLoading) return;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const res = await axios.get(
+          `https://backend.defcomm.ng/api/user/event/certificate`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+
+        const data = res.data?.data || [];
+        setRegistrations(data);
+
+        // Auto-select first event that has certificate
+        const eventWithCert = data.find(
+          (reg) =>
+            Array.isArray(reg.certificates) && reg.certificates.length > 0,
+        );
+        setSelectedEvent(
+          eventWithCert?.event_id || (data[0]?.event_id ?? null),
+        );
+      } catch (err) {
+        setError("Failed to load certificates");
+        toast.error("Failed to load certificates");
+        console.error("Certificate fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [token, authLoading]);
+  // ===================================================
+
+  // ==================== GET CURRENT CERTIFICATE ====================
+  const currentCertificate = useMemo(() => {
+    if (!selectedEvent) return null;
+
+    const selectedReg = registrations.find(
+      (reg) => reg.event_id === selectedEvent,
+    );
+    if (
+      !selectedReg ||
+      !Array.isArray(selectedReg.certificates) ||
+      selectedReg.certificates.length === 0
+    ) {
+      return null;
+    }
+
+    const cert = selectedReg.certificates[0];
+    return {
+      name: cert.name || "Certificate of Participation",
+      isCollected: cert.is_collected === 1,
+    };
+  }, [selectedEvent, registrations]);
+  // ===================================================
+
+  const selectedEventName =
+    registrations.find((reg) => reg.event_id === selectedEvent)?.event_name ||
+    registrations.find((reg) => reg.event_id === selectedEvent)?.name ||
+    "Select an Event";
+
+  // ==================== LOADING & ERROR STATES (add at the top of return) ====================
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F8F9FB] flex items-center justify-center">
+        Loading certificates...
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#F8F9FB] flex items-center justify-center text-red-600">
+        {error}
+      </div>
+    );
+  }
+  // ===================================================
 
   return (
     <div className="min-h-screen bg-[#F8F9FB] p-4 sm:p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
+        <div className="mb-8 flex justify-center">
+          <div className="relative w-full max-w-xs">
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="w-full bg-white border border-gray-300 rounded-lg px-5 py-3 text-left flex items-center justify-between shadow-sm"
+            >
+              <span className="font-medium">{selectedEventName}</span>
+              <ChevronDown className="w-5 h-5 text-gray-500" />
+            </button>
+
+            {isDropdownOpen && (
+              <div className="absolute z-90 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg max-h-60 overflow-auto">
+                {registrations.map((reg) => (
+                  <button
+                    key={reg.event_id}
+                    onClick={() => {
+                      setSelectedEvent(reg.event_id);
+                      setIsDropdownOpen(false);
+                    }}
+                    className="w-full px-5 py-3 text-left hover:bg-gray-100"
+                  >
+                    {reg.event_name || reg.name || "Unnamed Event"}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
         {/* Certificate Container */}
         <div className="relative w-full max-w-5xl mx-auto shadow-2xl overflow-hidden rounded-lg">
           {/* Left Green Ribbon - thinner on mobile */}
@@ -61,9 +184,7 @@ const Certificate = () => {
 
               <p className="text-sm sm:text-base text-gray-700 leading-relaxed max-w-xl sm:max-w-2xl mx-auto px-2 sm:px-0">
                 Participated in the{" "}
-                <span className="font-bold">
-                  Africa Defense Technology Conference
-                </span>
+                <span className="font-bold">{selectedEventName}</span>
               </p>
             </div>
 
@@ -146,6 +267,18 @@ const Certificate = () => {
             (Not available yet – feature coming soon!)
           </p>
         </div>
+        {currentCertificate && (
+          <div className="text-center mt-6 mb-8">
+            <p className="inline-block px-8 py-2 bg-[#85AB20]/10 text-[#36460A] font-medium rounded-full text-sm">
+              {currentCertificate.name}
+            </p>
+            {currentCertificate.isCollected && (
+              <p className="mt-3 text-green-600 text-sm font-medium">
+                ✓ Certificate Collected
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
